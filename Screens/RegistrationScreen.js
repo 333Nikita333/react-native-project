@@ -215,8 +215,6 @@ const styles = StyleSheet.create({
   },
   form: {
     marginTop: 32,
-    display: "flex",
-    gap: 16,
   },
   input: {
     borderWidth: 1,
