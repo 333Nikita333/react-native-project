@@ -28,6 +28,8 @@ const RegistrationScreen = () => {
   const [isShowButtons, setIsShowButtons] = useState(true);
   //! Стейс аватарки пользователя
   const [isShowAvatar, setIsShowAvatar] = useState(false);
+  // Состояние для хранения текущего активного инпута
+  const [activeInput, setActiveInput] = useState(null);
 
   //? Подключение фонтов
   const [fontsLoaded] = useFonts({
@@ -59,13 +61,15 @@ const RegistrationScreen = () => {
   }, []);
 
   //? Переключение стейта инпута при фокусе
-  const handleInputFocus = () => {
+  const handleInputFocus = (inputName) => {
     setInputFocused(true);
+    setActiveInput(inputName);
   };
 
   //? Переключение стейта инпута при потере фокуса
   const handleInputBlur = () => {
     setInputFocused(false);
+    setActiveInput(null);
   };
 
   //? Закрытие клавиатуры по клику на кнопку
@@ -123,29 +127,38 @@ const RegistrationScreen = () => {
         <View style={styles.form}>
           <View style={styles.loginBox}>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                activeInput === "login" && styles.inputFocused,
+              ]}
               placeholder={"Логин"}
               placeholderTextColor={"#BDBDBD"}
-              onFocus={handleInputFocus}
+              onFocus={() => handleInputFocus("login")}
               onBlur={handleInputBlur}
             />
           </View>
           <View style={styles.emailBox}>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                activeInput === "email" && styles.inputFocused,
+              ]}
               placeholder={"Адрес электронной почты"}
               placeholderTextColor={"#BDBDBD"}
-              onFocus={handleInputFocus}
+              onFocus={() => handleInputFocus("email")}
               onBlur={handleInputBlur}
             />
           </View>
           <View style={styles.passwordBox}>
             <TextInput
-              style={{ ...styles.input, ...styles.inputPassword }}
+              style={[
+                styles.input,
+                activeInput === "password" && styles.inputFocused,
+              ]}
               placeholder={"Пароль"}
               placeholderTextColor={"#BDBDBD"}
               secureTextEntry={!isShowPassword}
-              onFocus={handleInputFocus}
+              onFocus={() => handleInputFocus("password")}
               onBlur={handleInputBlur}
             />
             <TouchableOpacity
@@ -229,6 +242,9 @@ const styles = StyleSheet.create({
     borderColor: "#E8E8E8",
     backgroundColor: "#F6F6F6",
     color: "#212121",
+  },
+  inputFocused: {
+    borderColor: "#FF6C00",
   },
   emailBox: {
     marginTop: 16,
