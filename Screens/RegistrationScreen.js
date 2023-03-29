@@ -1,11 +1,15 @@
-import { useCallback } from "react";
-import { Ionicons } from '@expo/vector-icons'; 
+import { useCallback, useEffect, useState } from "react";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
 import {
   StyleSheet,
   View,
   Text,
   TextInput,
   TouchableOpacity,
+  Platform,
+  KeyboardAvoidingView,
+  Keyboard,
+  Image, // импорт компонента клавиатуры
 } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -13,11 +17,64 @@ import * as SplashScreen from "expo-splash-screen";
 SplashScreen.preventAutoHideAsync();
 
 const RegistrationScreen = () => {
+  console.log(Platform.OS);
+  //! Стейт вывода клавиатуры
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  //! Стейт пароля
+  const [isShowPassword, setIsShowPassword] = useState(false);
+  //! Стейт фокуса инпута
+  const [inputFocused, setInputFocused] = useState(false);
+  //! Стейт кнопок signIn и logIn
+  const [isShowButtons, setIsShowButtons] = useState(true);
+  //! Стейс аватарки пользователя
+  const [isShowAvatar, setIsShowAvatar] = useState(false);
+
+  //? Подключение фонтов
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
-    "Roboto-Medium": require("../assets/fonts/Roboto-Medium.ttf")
+    "Roboto-Medium": require("../assets/fonts/Roboto-Medium.ttf"),
   });
 
+  //? Повесить слушателей события на клавиатуру при монтировании
+  //? и снятие - при размонтировании
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setIsShowButtons(false);
+      }
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setIsShowButtons(true);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  //? Переключение стейта инпута при фокусе
+  const handleInputFocus = () => {
+    setInputFocused(true);
+  };
+
+  //? Переключение стейта инпута при потере фокуса
+  const handleInputBlur = () => {
+    setInputFocused(false);
+  };
+
+  //? Закрытие клавиатуры по клику на кнопку
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
+
+  //? Загрузка фонтов
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
@@ -28,62 +85,105 @@ const RegistrationScreen = () => {
     return null;
   }
 
+  //? Показать или скрыть аватарку пользователя
+  const onPressBtnAddAvatar = () => {
+    setIsShowAvatar(!isShowAvatar);
+  };
+
   return (
     <View style={styles.signInBox} onLayout={onLayoutRootView}>
       <View style={styles.avatarBox}>
-        {/* <Image source={require("../assets/images/avatar-photo-120x120.jpg")} /> */}
-        <TouchableOpacity style={styles.addBtn} activeOpacity={0.6}>
-          <Ionicons name="add-circle-outline" size={28} color="#FF6C00" />
-          {/* <AntDesign name="closecircleo" size={25} color="#E8E8E8" /> */}
+        {isShowAvatar && (
+          <Image
+            style={styles.avatarImage}
+            source={require("../assets/images/avatar-photo-120x120.jpg")}
+          />
+        )}
+        <TouchableOpacity
+          style={styles.addBtn}
+          activeOpacity={0.8}
+          onPress={onPressBtnAddAvatar}
+        >
+          {isShowAvatar ? (
+            <AntDesign name="closecircleo" size={25} color="#E8E8E8" />
+          ) : (
+            <Ionicons
+              style={styles.iconAddBtn}
+              name="add-circle-outline"
+              size={25}
+              color="#FF6C00"
+            />
+          )}
         </TouchableOpacity>
       </View>
       <Text style={styles.title}>Регистрация</Text>
-      <View style={styles.form}>
-        <View style={styles.loginBox}>
-          <TextInput
-            style={styles.input}
-            placeholder={"Логин"}
-            placeholderTextColor={"#BDBDBD"}
-          />
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+      >
+        <View style={styles.form}>
+          <View style={styles.loginBox}>
+            <TextInput
+              style={styles.input}
+              placeholder={"Логин"}
+              placeholderTextColor={"#BDBDBD"}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+            />
+          </View>
+          <View style={styles.emailBox}>
+            <TextInput
+              style={styles.input}
+              placeholder={"Адрес электронной почты"}
+              placeholderTextColor={"#BDBDBD"}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+            />
+          </View>
+          <View style={styles.passwordBox}>
+            <TextInput
+              style={{ ...styles.input, ...styles.inputPassword }}
+              placeholder={"Пароль"}
+              placeholderTextColor={"#BDBDBD"}
+              secureTextEntry={!isShowPassword}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+            />
+            <TouchableOpacity
+              style={styles.btnShowPassword}
+              onPress={() => setIsShowPassword(!isShowPassword)}
+            >
+              <Text style={styles.textBtnShowPassword}>
+                {isShowPassword ? "Скрыть" : "Показать"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {isShowButtons && (
+            <>
+              <TouchableOpacity
+                style={styles.btnSignIn}
+                activeOpacity={0.8}
+                onPress={keyboardHide}
+              >
+                <Text style={styles.btnSignInText}>Зарегистрироваться</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.btnLogIn} activeOpacity={0.8}>
+                <Text style={styles.btnLogInText}>Уже есть аккаунт? Войти</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
-        <View style={styles.emailBox}>
-          <TextInput
-            style={styles.input}
-            placeholder={"Адрес электронной почты"}
-            placeholderTextColor={"#BDBDBD"}
-          />
-        </View>
-        <View style={styles.passwordBox}>
-          <TextInput
-            style={styles.input}
-            placeholder={"Пароль"}
-            placeholderTextColor={"#BDBDBD"}
-            secureTextEntry={true}
-          />
-          <Text>Показать</Text>
-        </View>
-        <TouchableOpacity style={styles.btnSignIn} activeOpacity={0.8}>
-          <Text style={styles.btnSignInText}>Зарегистрироваться</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btnLogIn} activeOpacity={0.8}>
-          <Text style={styles.btnLogInText}>Уже есть аккаунт? Войти</Text>
-        </TouchableOpacity>
-      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   signInBox: {
-    // justifyContent: "center",
-    // alignItems: "center",
-    // textAlign: "center",
     paddingRight: 16,
     paddingLeft: 16,
 
     backgroundColor: "#fff",
   },
-
   avatarBox: {
     marginLeft: "auto",
     marginRight: "auto",
@@ -94,16 +194,16 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: "#F6F6F6",
   },
-
+  avatarImage: {
+    borderRadius: 16,
+  },
   addBtn: {
     position: "absolute",
     right: -14,
     bottom: 14,
-    borderColor: "#F6F6F6",
     borderRadius: 45,
     backgroundColor: "#ffffff",
   },
-
   title: {
     marginTop: -60 + 32,
 
@@ -112,21 +212,11 @@ const styles = StyleSheet.create({
     lineHeight: 35,
     textAlign: "center",
     letterSpacing: 0.72,
-
-    color: "#212121",
   },
-
   form: {
     marginTop: 32,
     display: "flex",
     gap: 16,
-  },
-
-  emailBox: {
-    marginTop: 16,
-  },
-  passwordBox: {
-    marginTop: 16,
   },
   input: {
     borderWidth: 1,
@@ -140,7 +230,52 @@ const styles = StyleSheet.create({
 
     borderColor: "#E8E8E8",
     backgroundColor: "#F6F6F6",
-    color: "#f0f8ff",
+    color: "#212121",
+  },
+  emailBox: {
+    marginTop: 16,
+  },
+  passwordBox: {
+    marginTop: 16,
+    marginBottom: 43,
+  },
+  btnShowPassword: {
+    position: "absolute",
+    right: 15,
+    top: 15,
+  },
+  textBtnShowPassword: {
+    fontFamily: "Roboto",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#1B4371",
+  },
+  inputPassword: {
+    paddingRight: 85,
+  },
+  btnSignIn: {
+    borderRadius: 100,
+    padding: 16,
+
+    backgroundColor: "#FF6C00",
+  },
+  btnSignInText: {
+    textAlign: "center",
+    fontFamily: "Roboto",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#ffffff",
+  },
+  btnLogIn: {
+    marginTop: 16,
+    marginBottom: 45,
+  },
+  btnLogInText: {
+    textAlign: "center",
+    fontFamily: "Roboto",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#1B4371",
   },
 });
 
