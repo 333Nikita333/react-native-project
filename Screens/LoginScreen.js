@@ -17,11 +17,11 @@ SplashScreen.preventAutoHideAsync();
 
 const LoginScreen = ({ switchActiveForm }) => {
   console.log(Platform.OS);
-  //! Стейт вывода клавиатуры
+  //! Стейт отображения клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  //! Стейт пароля
+  //! Стейт отображения пароля
   const [isShowPassword, setIsShowPassword] = useState(false);
-  //! Стейт кнопок signSin и logIn
+  //! Стейт отображения кнопок signSin и logIn
   const [isShowButtons, setIsShowButtons] = useState(true);
   //! Стейт для хранения имени текущего активного инпута
   const [activeInput, setActiveInput] = useState(null);

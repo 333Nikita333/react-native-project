@@ -19,13 +19,13 @@ SplashScreen.preventAutoHideAsync();
 
 const RegistrationScreen = ({ switchActiveForm }) => {
   console.log(Platform.OS);
-  //! Стейт вывода клавиатуры
+  //! Стейт отображения клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  //! Стейт пароля
+  //! Стейт отображения пароля
   const [isShowPassword, setIsShowPassword] = useState(false);
-  //! Стейт кнопок signIn и logIn
+  //! Стейт отображения кнопок signIn и logIn
   const [isShowButtons, setIsShowButtons] = useState(true);
-  //! Стейт аватарки пользователя
+  //! Стейт отображения аватарки пользователя
   const [isShowAvatar, setIsShowAvatar] = useState(false);
   //! Стейт для хранения имени текущего активного инпута
   const [activeInput, setActiveInput] = useState(null);
