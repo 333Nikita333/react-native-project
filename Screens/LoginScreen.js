@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Platform,
   KeyboardAvoidingView,
-  Keyboard, // импорт компонента клавиатуры
+  Keyboard,
+  Alert, // импорт компонента клавиатуры
 } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -24,6 +25,23 @@ const LoginScreen = ({ switchActiveForm }) => {
   const [isShowButtons, setIsShowButtons] = useState(true);
   //! Стейт для хранения имени текущего активного инпута
   const [activeInput, setActiveInput] = useState(null);
+  //! Стейт хранения данных с формы
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  //? Обработчики формы
+  const emailHandler = (text) => setEmail(text);
+  const passwordHandler = (text) => setPassword(text);
+
+  //? Вывод данных формы на экран
+  const showFormData = () => {
+    email && password
+      ? Alert.alert(
+          "Данные подтверждены",
+          `Почта: ${email}, Пароль: ${password}`
+        )
+      : Alert.alert("Ошибка", "Пожалуйста, заполните все поля формы");
+  };
 
   //? Подключение фонтов
   const [fontsLoaded] = useFonts({
@@ -67,6 +85,7 @@ const LoginScreen = ({ switchActiveForm }) => {
   //? Закрытие клавиатуры по клику на кнопку
   const keyboardHide = () => {
     setIsShowKeyboard(false);
+    showFormData();
     Keyboard.dismiss();
   };
 
@@ -99,6 +118,8 @@ const LoginScreen = ({ switchActiveForm }) => {
               placeholderTextColor={"#BDBDBD"}
               onFocus={() => handleInputFocus("email")}
               onBlur={handleInputBlur}
+              value={email}
+              onChangeText={emailHandler}
             />
           </View>
           <View style={styles.passwordBox}>
@@ -113,6 +134,8 @@ const LoginScreen = ({ switchActiveForm }) => {
               secureTextEntry={!isShowPassword}
               onFocus={() => handleInputFocus("password")}
               onBlur={handleInputBlur}
+              value={password}
+              onChangeText={passwordHandler}
             />
             <TouchableOpacity
               style={styles.btnShowPassword}

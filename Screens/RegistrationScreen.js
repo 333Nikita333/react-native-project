@@ -9,7 +9,8 @@ import {
   Platform,
   KeyboardAvoidingView,
   Keyboard,
-  Image, // импорт компонента клавиатуры
+  Image,
+  Alert, // импорт компонента клавиатуры
 } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -28,6 +29,25 @@ const RegistrationScreen = ({ switchActiveForm }) => {
   const [isShowAvatar, setIsShowAvatar] = useState(false);
   //! Стейт для хранения имени текущего активного инпута
   const [activeInput, setActiveInput] = useState(null);
+  //! Стейт хранения данных с формы
+  const [login, setLogin] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  //? Обработчики формы
+  const loginHandler = (text) => setLogin(text);
+  const emailHandler = (text) => setEmail(text);
+  const passwordHandler = (text) => setPassword(text);
+
+  //? Вывод данных формы на экран
+  const showFormData = () => {
+    login && email && password
+      ? Alert.alert(
+          "Новый пользователь",
+          `Логин: ${login}, Почта: ${email}, Пароль: ${password}`
+        )
+      : Alert.alert("Ошибка", "Пожалуйста, заполните все поля формы");
+  };
 
   //? Подключение фонтов
   const [fontsLoaded] = useFonts({
@@ -68,9 +88,10 @@ const RegistrationScreen = ({ switchActiveForm }) => {
     setActiveInput(null);
   };
 
-  //? Закрытие клавиатуры по клику на кнопку
+  //? Закрытие клавиатуры по клику на кнопку и сбор данных формы в стейт
   const keyboardHide = () => {
     setIsShowKeyboard(false);
+    showFormData();
     Keyboard.dismiss();
   };
 
@@ -132,6 +153,8 @@ const RegistrationScreen = ({ switchActiveForm }) => {
               placeholderTextColor={"#BDBDBD"}
               onFocus={() => handleInputFocus("login")}
               onBlur={handleInputBlur}
+              value={login}
+              onChangeText={loginHandler}
             />
           </View>
           <View style={styles.emailBox}>
@@ -145,6 +168,8 @@ const RegistrationScreen = ({ switchActiveForm }) => {
               placeholderTextColor={"#BDBDBD"}
               onFocus={() => handleInputFocus("email")}
               onBlur={handleInputBlur}
+              value={email}
+              onChangeText={emailHandler}
             />
           </View>
           <View style={styles.passwordBox}>
@@ -159,6 +184,8 @@ const RegistrationScreen = ({ switchActiveForm }) => {
               secureTextEntry={!isShowPassword}
               onFocus={() => handleInputFocus("password")}
               onBlur={handleInputBlur}
+              value={password}
+              onChangeText={passwordHandler}
             />
             <TouchableOpacity
               style={styles.btnShowPassword}
@@ -199,7 +226,7 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    
+
     backgroundColor: "#fff",
   },
   avatarBox: {
