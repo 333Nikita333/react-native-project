@@ -10,7 +10,8 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   Image,
-  Alert, // импорт компонента клавиатуры
+  Alert,
+  useWindowDimensions, // импорт компонента клавиатуры
 } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -19,6 +20,10 @@ SplashScreen.preventAutoHideAsync();
 
 const RegistrationScreen = ({ switchActiveForm }) => {
   console.log(Platform.OS);
+  const { width, height } = useWindowDimensions();
+  //? Определение ориентации экрана
+  const isPortrait = height > width;
+  const isLandscape = height < width;
   //! Стейт отображения клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   //! Стейт отображения пароля
@@ -112,7 +117,7 @@ const RegistrationScreen = ({ switchActiveForm }) => {
   };
 
   return (
-    <View style={styles.signInBox} onLayout={onLayoutRootView}>
+    <View style={[styles.signInBox, isLandscape && styles.signInBoxLandscape]} onLayout={onLayoutRootView}>
       <View style={styles.avatarBox}>
         {isShowAvatar && (
           <Image
@@ -228,6 +233,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
 
     backgroundColor: "#fff",
+  },
+  signInBoxLandscape: {
+    marginHorizontal: 150,
   },
   avatarBox: {
     marginLeft: "auto",

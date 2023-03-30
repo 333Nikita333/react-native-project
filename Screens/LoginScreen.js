@@ -8,7 +8,8 @@ import {
   Platform,
   KeyboardAvoidingView,
   Keyboard,
-  Alert, // импорт компонента клавиатуры
+  Alert,
+  useWindowDimensions, // импорт компонента клавиатуры
 } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -17,6 +18,11 @@ SplashScreen.preventAutoHideAsync();
 
 const LoginScreen = ({ switchActiveForm }) => {
   console.log(Platform.OS);
+  const { width, height } = useWindowDimensions();
+  //? Определение ориентации экрана
+  const isPortrait = height > width;
+  const isLandscape = height < width;
+
   //! Стейт отображения клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   //! Стейт отображения пароля
@@ -101,7 +107,10 @@ const LoginScreen = ({ switchActiveForm }) => {
   }
 
   return (
-    <View style={styles.logInBox} onLayout={onLayoutRootView}>
+    <View
+      style={[styles.logInBox, isLandscape && styles.logInBoxLandscape]}
+      onLayout={onLayoutRootView}
+    >
       <Text style={styles.title}>Войти</Text>
       <KeyboardAvoidingView
         behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -156,7 +165,7 @@ const LoginScreen = ({ switchActiveForm }) => {
                 <Text style={styles.btnLogInText}>Войти</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.btnSignIn}
+                style={[styles.btnSignIn, isLandscape && styles.btnSignInIsLandscape]}
                 activeOpacity={0.8}
                 onPress={switchActiveForm}
               >
@@ -180,6 +189,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
 
     backgroundColor: "#fff",
+  },
+  logInBoxLandscape: {
+    marginHorizontal: 150,
   },
   title: {
     marginTop: 32,
@@ -235,6 +247,9 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 16,
     marginBottom: 111,
+  },
+  btnSignInIsLandscape: {
+    marginBottom: 20,
   },
   btnSignInText: {
     textAlign: "center",
