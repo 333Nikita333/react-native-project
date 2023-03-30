@@ -14,22 +14,25 @@ import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 
-const LoginScreen = () => {
+const LoginScreen = ({ switchActiveForm }) => {
   console.log(Platform.OS);
   //! Стейт вывода клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   //! Стейт пароля
   const [isShowPassword, setIsShowPassword] = useState(false);
-  //! Стейт фокуса инпута
-  const [inputFocused, setInputFocused] = useState(false);
   //! Стейт кнопок signSin и logIn
   const [isShowButtons, setIsShowButtons] = useState(true);
+  //! Стейт для хранения имени текущего активного инпута
+  const [activeInput, setActiveInput] = useState(null);
 
+  //? Подключение фонтов
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
     "Roboto-Medium": require("../assets/fonts/Roboto-Medium.ttf"),
   });
 
+  //? Вешание слушателей события на клавиатуру при монтировании
+  //? и снятие - перед размонтированием
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -51,12 +54,14 @@ const LoginScreen = () => {
     };
   }, []);
 
-  const handleInputFocus = () => {
-    setInputFocused(true);
+  //? Переключение стейта инпута при фокусе
+  const handleInputFocus = (inputName) => {
+    setActiveInput(inputName);
   };
 
+  //? Переключение стейта инпута при потере фокуса
   const handleInputBlur = () => {
-    setInputFocused(false);
+    setActiveInput(null);
   };
 
   //? Закрытие клавиатуры по клику на кнопку
@@ -65,7 +70,7 @@ const LoginScreen = () => {
     Keyboard.dismiss();
   };
 
-  //? Подключение фонтов
+  //? Загрузка фонтов
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
@@ -85,20 +90,28 @@ const LoginScreen = () => {
         <View style={styles.form}>
           <View style={styles.emailBox}>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                activeInput === "email" && styles.inputFocused,
+              ]}
+              cursorColor="#FF6C00"
               placeholder={"Адрес электронной почты"}
               placeholderTextColor={"#BDBDBD"}
-              onFocus={handleInputFocus}
+              onFocus={() => handleInputFocus("email")}
               onBlur={handleInputBlur}
             />
           </View>
-          <View>
+          <View style={styles.passwordBox}>
             <TextInput
-              style={{ ...styles.input, ...styles.inputPassword }}
+              style={[
+                styles.input,
+                activeInput === "password" && styles.inputFocused,
+              ]}
+              cursorColor="#FF6C00"
               placeholder={"Пароль"}
               placeholderTextColor={"#BDBDBD"}
               secureTextEntry={!isShowPassword}
-              onFocus={handleInputFocus}
+              onFocus={() => handleInputFocus("password")}
               onBlur={handleInputBlur}
             />
             <TouchableOpacity
@@ -119,7 +132,11 @@ const LoginScreen = () => {
               >
                 <Text style={styles.btnLogInText}>Войти</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.btnSignIn} activeOpacity={0.8}>
+              <TouchableOpacity
+                style={styles.btnSignIn}
+                activeOpacity={0.8}
+                onPress={switchActiveForm}
+              >
                 <Text style={styles.btnSignInText}>
                   Нет аккаунта? Зарегистрироваться
                 </Text>
@@ -136,6 +153,8 @@ const styles = StyleSheet.create({
   logInBox: {
     paddingRight: 16,
     paddingLeft: 16,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
 
     backgroundColor: "#fff",
   },
@@ -150,25 +169,6 @@ const styles = StyleSheet.create({
   },
   form: {
     marginTop: 32,
-    display: "flex",
-    gap: 16,
-  },
-  emailBox: {
-    marginTop: 16,
-  },
-  passwordBox: {
-    marginTop: 16,
-  },
-  btnShowPassword: {
-    position: "absolute",
-    right: 15,
-    top: 15,
-  },
-  textBtnShowPassword: {
-    fontFamily: "Roboto",
-    fontSize: 16,
-    lineHeight: 19,
-    color: "#1B4371",
   },
   input: {
     borderWidth: 1,
@@ -184,12 +184,33 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
     color: "#212121",
   },
-  inputPassword: {
-    paddingRight: 85,
+  inputFocused: {
+    borderColor: "#FF6C00",
+  },
+  emailBox: {
+    marginTop: 16,
+  },
+  passwordBox: {
+    marginTop: 16,
     marginBottom: 43,
   },
+  btnShowPassword: {
+    position: "absolute",
+    right: 15,
+    top: 15,
+  },
+  textBtnShowPassword: {
+    fontFamily: "Roboto",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#1B4371",
+  },
+  inputPassword: {
+    paddingRight: 85,
+  },
   btnSignIn: {
-    marginTop: 16,
+    paddingTop: 16,
+    paddingBottom: 16,
     marginBottom: 111,
   },
   btnSignInText: {

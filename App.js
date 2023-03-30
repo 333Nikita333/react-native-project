@@ -1,4 +1,5 @@
 import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -6,10 +7,17 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-// import LoginScreen from "./Screens/LoginScreen";
+import LoginScreen from "./Screens/LoginScreen";
 import RegistrationScreen from "./Screens/RegistrationScreen";
 
 export default function App() {
+  const [isActiveForm, setIsActiveForm] = useState(true);
+
+  //? Пелеключение активной формы
+  const switchActiveForm = () => {
+    setIsActiveForm(!isActiveForm);
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -17,8 +25,11 @@ export default function App() {
           style={styles.image}
           source={require("./assets/images/image-background-375x812.jpg")}
         >
-          <RegistrationScreen />
-          {/* <LoginScreen /> */}
+          {isActiveForm ? (
+            <RegistrationScreen switchActiveForm={switchActiveForm} />
+          ) : (
+            <LoginScreen switchActiveForm={switchActiveForm} />
+          )}
         </ImageBackground>
         <StatusBar style="auto" />
       </View>

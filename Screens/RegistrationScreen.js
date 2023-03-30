@@ -16,19 +16,17 @@ import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 
-const RegistrationScreen = () => {
+const RegistrationScreen = ({ switchActiveForm }) => {
   console.log(Platform.OS);
   //! Стейт вывода клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   //! Стейт пароля
   const [isShowPassword, setIsShowPassword] = useState(false);
-  //! Стейт фокуса инпута
-  const [inputFocused, setInputFocused] = useState(false);
   //! Стейт кнопок signIn и logIn
   const [isShowButtons, setIsShowButtons] = useState(true);
-  //! Стейс аватарки пользователя
+  //! Стейт аватарки пользователя
   const [isShowAvatar, setIsShowAvatar] = useState(false);
-  // Состояние для хранения текущего активного инпута
+  //! Стейт для хранения имени текущего активного инпута
   const [activeInput, setActiveInput] = useState(null);
 
   //? Подключение фонтов
@@ -37,8 +35,8 @@ const RegistrationScreen = () => {
     "Roboto-Medium": require("../assets/fonts/Roboto-Medium.ttf"),
   });
 
-  //? Повесить слушателей события на клавиатуру при монтировании
-  //? и снятие - при размонтировании
+  //? Вешание слушателей события на клавиатуру при монтировании
+  //? и снятие - перед размонтированием
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -62,13 +60,11 @@ const RegistrationScreen = () => {
 
   //? Переключение стейта инпута при фокусе
   const handleInputFocus = (inputName) => {
-    setInputFocused(true);
     setActiveInput(inputName);
   };
 
   //? Переключение стейта инпута при потере фокуса
   const handleInputBlur = () => {
-    setInputFocused(false);
     setActiveInput(null);
   };
 
@@ -131,6 +127,7 @@ const RegistrationScreen = () => {
                 styles.input,
                 activeInput === "login" && styles.inputFocused,
               ]}
+              cursorColor="#FF6C00"
               placeholder={"Логин"}
               placeholderTextColor={"#BDBDBD"}
               onFocus={() => handleInputFocus("login")}
@@ -143,6 +140,7 @@ const RegistrationScreen = () => {
                 styles.input,
                 activeInput === "email" && styles.inputFocused,
               ]}
+              cursorColor="#FF6C00"
               placeholder={"Адрес электронной почты"}
               placeholderTextColor={"#BDBDBD"}
               onFocus={() => handleInputFocus("email")}
@@ -155,6 +153,7 @@ const RegistrationScreen = () => {
                 styles.input,
                 activeInput === "password" && styles.inputFocused,
               ]}
+              cursorColor="#FF6C00"
               placeholder={"Пароль"}
               placeholderTextColor={"#BDBDBD"}
               secureTextEntry={!isShowPassword}
@@ -179,7 +178,11 @@ const RegistrationScreen = () => {
               >
                 <Text style={styles.btnSignInText}>Зарегистрироваться</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.btnLogIn} activeOpacity={0.8}>
+              <TouchableOpacity
+                style={styles.btnLogIn}
+                activeOpacity={0.8}
+                onPress={switchActiveForm}
+              >
                 <Text style={styles.btnLogInText}>Уже есть аккаунт? Войти</Text>
               </TouchableOpacity>
             </>
@@ -194,7 +197,9 @@ const styles = StyleSheet.create({
   signInBox: {
     paddingRight: 16,
     paddingLeft: 16,
-
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    
     backgroundColor: "#fff",
   },
   avatarBox: {
@@ -281,7 +286,7 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
   btnLogIn: {
-    marginTop: 16,
+    paddingTop: 16,
     marginBottom: 45,
   },
   btnLogInText: {
