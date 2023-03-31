@@ -45,7 +45,7 @@ const LoginScreen = ({ switchActiveForm }) => {
   //? Вывод данных формы на экран
   const showFormData = () => {
     const { email, password } = formData;
-    
+
     email && password
       ? Alert.alert(
           "Данные подтверждены",
@@ -208,11 +208,11 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 32,
+    textAlign: "center",
 
     fontFamily: "Roboto-Medium",
     fontSize: 30,
     lineHeight: 35,
-    textAlign: "center",
     letterSpacing: 0.72,
   },
   form: {
@@ -251,6 +251,7 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     fontSize: 16,
     lineHeight: 19,
+
     color: "#1B4371",
   },
   inputPassword: {
@@ -266,9 +267,11 @@ const styles = StyleSheet.create({
   },
   btnSignInText: {
     textAlign: "center",
+
     fontFamily: "Roboto",
     fontSize: 16,
     lineHeight: 19,
+
     color: "#1B4371",
   },
   btnLogIn: {
@@ -279,9 +282,11 @@ const styles = StyleSheet.create({
   },
   btnLogInText: {
     textAlign: "center",
+
     fontFamily: "Roboto",
     fontSize: 16,
     lineHeight: 19,
+
     color: "#ffffff",
   },
 });

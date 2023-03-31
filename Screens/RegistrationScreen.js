@@ -45,7 +45,7 @@ const RegistrationScreen = ({ switchActiveForm }) => {
   //? Определение ориентации экрана
   const isPortrait = height > width;
   const isLandscape = height < width;
-console.log(height)
+
   //? Вывод данных формы на экран
   const showFormData = () => {
     const { login, email, password } = formData;
@@ -259,6 +259,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 16,
+
     backgroundColor: "#F6F6F6",
   },
   avatarImage: {
@@ -269,15 +270,16 @@ const styles = StyleSheet.create({
     right: -14,
     bottom: 14,
     borderRadius: 45,
+
     backgroundColor: "#ffffff",
   },
   title: {
     marginTop: -60 + 32,
+    textAlign: "center",
 
     fontFamily: "Roboto-Medium",
     fontSize: 30,
     lineHeight: 35,
-    textAlign: "center",
     letterSpacing: 0.72,
   },
   form: {
@@ -316,6 +318,7 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     fontSize: 16,
     lineHeight: 19,
+
     color: "#1B4371",
   },
   inputPassword: {
@@ -329,9 +332,11 @@ const styles = StyleSheet.create({
   },
   btnSignInText: {
     textAlign: "center",
+
     fontFamily: "Roboto",
     fontSize: 16,
     lineHeight: 19,
+
     color: "#ffffff",
   },
   btnLogIn: {
@@ -340,9 +345,11 @@ const styles = StyleSheet.create({
   },
   btnLogInText: {
     textAlign: "center",
+
     fontFamily: "Roboto",
     fontSize: 16,
     lineHeight: 19,
+
     color: "#1B4371",
   },
 });
