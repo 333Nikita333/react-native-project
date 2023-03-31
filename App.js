@@ -48,12 +48,10 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    justifyContent: "flex-end",
     keyboardShouldPersistTaps: "handled",
   },
   image: {
     flex: 1,
-    flexGrow: 1,
     justifyContent: "flex-end",
   },
   title: {

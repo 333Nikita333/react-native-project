@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Ionicons, AntDesign } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import {
   StyleSheet,
   View,
@@ -141,9 +141,9 @@ const RegistrationScreen = ({ switchActiveForm }) => {
           {isShowAvatar ? (
             <AntDesign name="closecircleo" size={25} color="#E8E8E8" />
           ) : (
-            <Ionicons
+            <AntDesign
               style={styles.iconAddBtn}
-              name="add-circle-outline"
+              name="pluscircleo"
               size={25}
               color="#FF6C00"
             />
