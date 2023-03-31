@@ -9,19 +9,20 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   Alert,
-  useWindowDimensions, // импорт компонента клавиатуры
+  useWindowDimensions,
 } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 
+const initialFormData = {
+  email: "",
+  password: "",
+};
+
 const LoginScreen = ({ switchActiveForm }) => {
   console.log(Platform.OS);
-  const { width, height } = useWindowDimensions();
-  //? Определение ориентации экрана
-  const isPortrait = height > width;
-  const isLandscape = height < width;
 
   //! Стейт отображения клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -32,15 +33,19 @@ const LoginScreen = ({ switchActiveForm }) => {
   //! Стейт для хранения имени текущего активного инпута
   const [activeInput, setActiveInput] = useState(null);
   //! Стейт хранения данных с формы
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState(initialFormData);
 
-  //? Обработчики формы
-  const emailHandler = (text) => setEmail(text);
-  const passwordHandler = (text) => setPassword(text);
+  //? Хук, который получает текущую ширину и высоту экрана
+  const { width, height } = useWindowDimensions();
+
+  //? Определение ориентации экрана
+  const isPortrait = height > width;
+  const isLandscape = height < width;
 
   //? Вывод данных формы на экран
   const showFormData = () => {
+    const { email, password } = formData;
+    
     email && password
       ? Alert.alert(
           "Данные подтверждены",
@@ -92,6 +97,7 @@ const LoginScreen = ({ switchActiveForm }) => {
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     showFormData();
+    setFormData(initialFormData);
     Keyboard.dismiss();
   };
 
@@ -127,8 +133,10 @@ const LoginScreen = ({ switchActiveForm }) => {
               placeholderTextColor={"#BDBDBD"}
               onFocus={() => handleInputFocus("email")}
               onBlur={handleInputBlur}
-              value={email}
-              onChangeText={emailHandler}
+              value={formData.email}
+              onChangeText={(value) =>
+                setFormData((prevState) => ({ ...prevState, email: value }))
+              }
             />
           </View>
           <View style={styles.passwordBox}>
@@ -143,8 +151,10 @@ const LoginScreen = ({ switchActiveForm }) => {
               secureTextEntry={!isShowPassword}
               onFocus={() => handleInputFocus("password")}
               onBlur={handleInputBlur}
-              value={password}
-              onChangeText={passwordHandler}
+              value={formData.password}
+              onChangeText={(value) =>
+                setFormData((prevState) => ({ ...prevState, password: value }))
+              }
             />
             <TouchableOpacity
               style={styles.btnShowPassword}
@@ -165,7 +175,10 @@ const LoginScreen = ({ switchActiveForm }) => {
                 <Text style={styles.btnLogInText}>Войти</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.btnSignIn, isLandscape && styles.btnSignInIsLandscape]}
+                style={[
+                  styles.btnSignIn,
+                  isLandscape && styles.btnSignInIsLandscape,
+                ]}
                 activeOpacity={0.8}
                 onPress={switchActiveForm}
               >

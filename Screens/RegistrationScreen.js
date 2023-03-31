@@ -11,19 +11,21 @@ import {
   Keyboard,
   Image,
   Alert,
-  useWindowDimensions, // импорт компонента клавиатуры
+  useWindowDimensions,
 } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 
+const initialFormData = {
+  login: "",
+  email: "",
+  password: "",
+};
 const RegistrationScreen = ({ switchActiveForm }) => {
   console.log(Platform.OS);
-  const { width, height } = useWindowDimensions();
-  //? Определение ориентации экрана
-  const isPortrait = height > width;
-  const isLandscape = height < width;
+
   //! Стейт отображения клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   //! Стейт отображения пароля
@@ -35,17 +37,19 @@ const RegistrationScreen = ({ switchActiveForm }) => {
   //! Стейт для хранения имени текущего активного инпута
   const [activeInput, setActiveInput] = useState(null);
   //! Стейт хранения данных с формы
-  const [login, setLogin] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState(initialFormData);
 
-  //? Обработчики формы
-  const loginHandler = (text) => setLogin(text);
-  const emailHandler = (text) => setEmail(text);
-  const passwordHandler = (text) => setPassword(text);
+  //? Хук, который получает текущую ширину и высоту экрана
+  const { width, height } = useWindowDimensions();
 
+  //? Определение ориентации экрана
+  const isPortrait = height > width;
+  const isLandscape = height < width;
+console.log(height)
   //? Вывод данных формы на экран
   const showFormData = () => {
+    const { login, email, password } = formData;
+
     login && email && password
       ? Alert.alert(
           "Новый пользователь",
@@ -97,6 +101,7 @@ const RegistrationScreen = ({ switchActiveForm }) => {
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     showFormData();
+    setFormData(initialFormData);
     Keyboard.dismiss();
   };
 
@@ -117,7 +122,10 @@ const RegistrationScreen = ({ switchActiveForm }) => {
   };
 
   return (
-    <View style={[styles.signInBox, isLandscape && styles.signInBoxLandscape]} onLayout={onLayoutRootView}>
+    <View
+      style={[styles.signInBox, isLandscape && styles.signInBoxLandscape]}
+      onLayout={onLayoutRootView}
+    >
       <View style={styles.avatarBox}>
         {isShowAvatar && (
           <Image
@@ -158,8 +166,10 @@ const RegistrationScreen = ({ switchActiveForm }) => {
               placeholderTextColor={"#BDBDBD"}
               onFocus={() => handleInputFocus("login")}
               onBlur={handleInputBlur}
-              value={login}
-              onChangeText={loginHandler}
+              value={formData.login}
+              onChangeText={(value) =>
+                setFormData((prevState) => ({ ...prevState, login: value }))
+              }
             />
           </View>
           <View style={styles.emailBox}>
@@ -173,8 +183,10 @@ const RegistrationScreen = ({ switchActiveForm }) => {
               placeholderTextColor={"#BDBDBD"}
               onFocus={() => handleInputFocus("email")}
               onBlur={handleInputBlur}
-              value={email}
-              onChangeText={emailHandler}
+              value={formData.email}
+              onChangeText={(value) =>
+                setFormData((prevState) => ({ ...prevState, email: value }))
+              }
             />
           </View>
           <View style={styles.passwordBox}>
@@ -189,8 +201,10 @@ const RegistrationScreen = ({ switchActiveForm }) => {
               secureTextEntry={!isShowPassword}
               onFocus={() => handleInputFocus("password")}
               onBlur={handleInputBlur}
-              value={password}
-              onChangeText={passwordHandler}
+              value={formData.password}
+              onChangeText={(value) =>
+                setFormData((prevState) => ({ ...prevState, password: value }))
+              }
             />
             <TouchableOpacity
               style={styles.btnShowPassword}

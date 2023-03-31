@@ -6,6 +6,7 @@ import {
   ImageBackground,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from "react-native";
 import LoginScreen from "./Screens/LoginScreen";
 import RegistrationScreen from "./Screens/RegistrationScreen";
@@ -21,6 +22,7 @@ export default function App() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.contentContainer}>
           <ImageBackground
             style={styles.image}
             source={require("./assets/images/image-background-375x812.jpg")}
@@ -31,23 +33,26 @@ export default function App() {
               <LoginScreen switchActiveForm={switchActiveForm} />
             )}
           </ImageBackground>
+        </ScrollView>
         <StatusBar style="auto" />
       </View>
     </TouchableWithoutFeedback>
   );
 }
-{/* <ScrollView contentContainerStyle={styles.contentContainer}></ScrollView> */}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
   },
   contentContainer: {
-    flex: 1
+    flexGrow: 1,
+    justifyContent: "flex-end",
+    keyboardShouldPersistTaps: "handled",
   },
   image: {
     flex: 1,
-    resizeMode: "cover",
+    flexGrow: 1,
     justifyContent: "flex-end",
   },
   title: {
