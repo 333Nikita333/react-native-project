@@ -35,7 +35,7 @@ const LoginScreen = ({ switchActiveForm }) => {
   //! Стейт хранения данных с формы
   const [formData, setFormData] = useState(initialFormData);
 
-  //? Хук, который получает текущую ширину и высоту экрана
+  //? Хук, который отображает текущую ширину и высоту экрана
   const { width, height } = useWindowDimensions();
 
   //? Определение ориентации экрана
