@@ -25,7 +25,7 @@ const initialFormData = {
 };
 const RegistrationScreen = ({ switchActiveForm }) => {
   console.log(Platform.OS);
-
+  console.log("Hello")
   //! Стейт отображения клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   //! Стейт отображения пароля
@@ -241,6 +241,7 @@ const RegistrationScreen = ({ switchActiveForm }) => {
 
 const styles = StyleSheet.create({
   signInBox: {
+    marginTop: "auto",
     paddingRight: 16,
     paddingLeft: 16,
     borderTopLeftRadius: 25,

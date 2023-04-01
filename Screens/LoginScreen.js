@@ -23,7 +23,7 @@ const initialFormData = {
 
 const LoginScreen = ({ switchActiveForm }) => {
   console.log(Platform.OS);
-
+  console.log("Hello")
   //! Стейт отображения клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   //! Стейт отображения пароля
@@ -196,6 +196,7 @@ const LoginScreen = ({ switchActiveForm }) => {
 
 const styles = StyleSheet.create({
   logInBox: {
+    marginTop: "auto",
     paddingRight: 16,
     paddingLeft: 16,
     borderTopLeftRadius: 25,

@@ -7,13 +7,14 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
+  Image,
 } from "react-native";
 import LoginScreen from "./Screens/LoginScreen";
 import RegistrationScreen from "./Screens/RegistrationScreen";
 
 export default function App() {
   const [isActiveForm, setIsActiveForm] = useState(true);
-
+console.log("Hello")
   //? Пелеключение активной формы
   const switchActiveForm = () => {
     setIsActiveForm(!isActiveForm);
@@ -23,16 +24,15 @@ export default function App() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.contentContainer}>
-          <ImageBackground
+          <Image
             style={styles.image}
             source={require("./assets/images/image-background-375x812.jpg")}
-          >
+          />
             {isActiveForm ? (
-              <RegistrationScreen switchActiveForm={switchActiveForm} />
+              <RegistrationScreen style={styles.reg} switchActiveForm={switchActiveForm} />
             ) : (
-              <LoginScreen switchActiveForm={switchActiveForm} />
+              <LoginScreen style={styles.loge} switchActiveForm={switchActiveForm} />
             )}
-          </ImageBackground>
         </ScrollView>
         <StatusBar style="auto" />
       </View>
@@ -47,12 +47,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   contentContainer: {
+    
     flexGrow: 1,
     keyboardShouldPersistTaps: "handled",
   },
   image: {
-    flex: 1,
-    justifyContent: "flex-end",
+    position: 'absolute',
+    top: 0,
+    width: "100%"
   },
   title: {
     fontSize: 20,
