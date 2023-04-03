@@ -14,7 +14,7 @@ import RegistrationScreen from "./Screens/RegistrationScreen";
 
 export default function App() {
   const [isActiveForm, setIsActiveForm] = useState(true);
-console.log("Hello")
+  console.log("Hello");
   //? Пелеключение активной формы
   const switchActiveForm = () => {
     setIsActiveForm(!isActiveForm);
@@ -28,11 +28,17 @@ console.log("Hello")
             style={styles.image}
             source={require("./assets/images/image-background-375x812.jpg")}
           />
-            {isActiveForm ? (
-              <RegistrationScreen style={styles.reg} switchActiveForm={switchActiveForm} />
-            ) : (
-              <LoginScreen style={styles.loge} switchActiveForm={switchActiveForm} />
-            )}
+          {isActiveForm ? (
+            <RegistrationScreen
+              style={styles.reg}
+              switchActiveForm={switchActiveForm}
+            />
+          ) : (
+            <LoginScreen
+              style={styles.loge}
+              switchActiveForm={switchActiveForm}
+            />
+          )}
         </ScrollView>
         <StatusBar style="auto" />
       </View>
@@ -47,14 +53,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   contentContainer: {
-    
     flexGrow: 1,
     keyboardShouldPersistTaps: "handled",
   },
   image: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
-    width: "100%"
+    width: "100%",
   },
   title: {
     fontSize: 20,

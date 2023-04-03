@@ -24,8 +24,7 @@ const initialFormData = {
   password: "",
 };
 const RegistrationScreen = ({ switchActiveForm }) => {
-  console.log(Platform.OS);
-  console.log("Hello")
+
   //! Стейт отображения клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   //! Стейт отображения пароля
