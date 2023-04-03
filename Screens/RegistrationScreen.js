@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import * as ImagePicker from "expo-image-picker";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,19 +25,18 @@ const initialFormData = {
   password: "",
 };
 const RegistrationScreen = ({ switchActiveForm }) => {
-
   //! Стейт отображения клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   //! Стейт отображения пароля
   const [isShowPassword, setIsShowPassword] = useState(false);
   //! Стейт отображения кнопок signIn и logIn
   const [isShowButtons, setIsShowButtons] = useState(true);
-  //! Стейт отображения аватарки пользователя
-  const [isShowAvatar, setIsShowAvatar] = useState(false);
   //! Стейт для хранения имени текущего активного инпута
   const [activeInput, setActiveInput] = useState(null);
   //! Стейт хранения данных с формы
   const [formData, setFormData] = useState(initialFormData);
+  //! Стейт хранения аватарки пользователя
+  const [userAvatar, setUserAvatar] = useState(null);
 
   //? Хук, который отображает текущую ширину и высоту экрана
   const { width, height } = useWindowDimensions();
@@ -86,6 +86,28 @@ const RegistrationScreen = ({ switchActiveForm }) => {
     };
   }, []);
 
+  //? Зарузка аватарки пользователя
+  const pickUserAvatar = async () => {
+    if (userAvatar) return setUserAvatar(null);
+
+    // Для запуска библиотеки изображений не требуется никаких разрешений
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+    if (result.canceled) {
+      return;
+    }
+
+    if (!result.canceled) {
+      setUserAvatar(result.assets[0].uri);
+    }
+  };
+
   //? Переключение стейта инпута при фокусе
   const handleInputFocus = (inputName) => {
     setActiveInput(inputName);
@@ -115,29 +137,21 @@ const RegistrationScreen = ({ switchActiveForm }) => {
     return null;
   }
 
-  //? Показать или скрыть аватарку пользователя
-  const onPressBtnAddAvatar = () => {
-    setIsShowAvatar(!isShowAvatar);
-  };
-
   return (
     <View
       style={[styles.signInBox, isLandscape && styles.signInBoxLandscape]}
       onLayout={onLayoutRootView}
     >
       <View style={styles.avatarBox}>
-        {isShowAvatar && (
-          <Image
-            style={styles.avatarImage}
-            source={require("../assets/images/avatar-photo-120x120.jpg")}
-          />
+        {userAvatar && (
+          <Image style={styles.avatarImage} source={{ uri: userAvatar }} />
         )}
         <TouchableOpacity
           style={styles.addBtn}
           activeOpacity={0.8}
-          onPress={onPressBtnAddAvatar}
+          onPress={pickUserAvatar}
         >
-          {isShowAvatar ? (
+          {userAvatar ? (
             <AntDesign name="closecircleo" size={25} color="#E8E8E8" />
           ) : (
             <AntDesign
@@ -264,6 +278,9 @@ const styles = StyleSheet.create({
   },
   avatarImage: {
     borderRadius: 16,
+    width: 120,
+    height: 120,
+    resizeMode: "cover",
   },
   addBtn: {
     position: "absolute",

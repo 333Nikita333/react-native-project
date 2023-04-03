@@ -14,7 +14,7 @@ import RegistrationScreen from "./Screens/RegistrationScreen";
 
 export default function App() {
   const [isActiveForm, setIsActiveForm] = useState(true);
-  console.log("Hello");
+
   //? Пелеключение активной формы
   const switchActiveForm = () => {
     setIsActiveForm(!isActiveForm);
