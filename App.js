@@ -3,7 +3,6 @@ import { useState } from "react";
 import {
   StyleSheet,
   View,
-  ImageBackground,
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
