@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import Authorization from "./src/screens/auth/Authorization/Authorization";
-// import Home from "./src/screens/user/Home/Home";
+import Home from "./src/screens/user/Home/Home";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -38,11 +38,11 @@ export default function App() {
           component={Authorization}
           options={{ headerShown: false }}
         />
-        {/* <Stack.Screen
+        <Stack.Screen
           name="Home"
           component={Home}
           options={{ headerShown: false }}
-        /> */}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
