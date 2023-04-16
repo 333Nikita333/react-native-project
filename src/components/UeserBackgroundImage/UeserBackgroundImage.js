@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     position: "relative",
     top: 0,
     width: "100%",
+    zIndex: -50
   },
 });
 
