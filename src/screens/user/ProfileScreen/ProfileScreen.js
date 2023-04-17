@@ -11,7 +11,6 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { styles } from "./ProfileScreen.styled";
 import { Feather } from "@expo/vector-icons";
-import Icon from "react-native-vector-icons/Feather";
 
 const ProfileScreen = ({ navigation }) => {
   //! Стейт хранения аватарки пользователя

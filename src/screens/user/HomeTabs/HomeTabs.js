@@ -3,22 +3,21 @@ import PostsScreen from "../PostsScreen/PostsScreen";
 import CreatePostsScreen from "../CreatePostsScreen/CreatePostsScreen";
 import ProfileScreen from "../ProfileScreen/ProfileScreen";
 import { TouchableOpacity } from "react-native";
-import { Feather, AntDesign } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { styles } from "./HomeTabs.styled";
-// import { useNavigation } from "@react-navigation/native";
 
 const HomeTabs = ({ navigation }) => {
   const BottomTab = createBottomTabNavigator();
 
   return (
     <BottomTab.Navigator
-    // screenOptions={{
-    //   tabBarStyle: {
-    //     height: 80,
-    //     paddingLeft: 80,
-    //     paddingRight: 80
-    //   },
-    // }}
+      screenOptions={{
+        tabBarStyle: {
+          height: 80,
+          paddingLeft: 80,
+          paddingRight: 80,
+        },
+      }}
     >
       <BottomTab.Screen
         name="PostsScreen"
@@ -32,9 +31,11 @@ const HomeTabs = ({ navigation }) => {
             fontSize: 17,
             lineHeight: 22,
             letterSpacing: -0.408,
+            paddingBottom: 16,
           },
           headerRightContainerStyle: {
             paddingRight: 16,
+            paddingBottom: 16,
           },
           headerRight: () => (
             <TouchableOpacity onPress={() => navigation.navigate("Login")}>
@@ -85,11 +86,11 @@ const HomeTabs = ({ navigation }) => {
             //   />
             // </TouchableOpacity>
             <Feather
-                name="user"
-                focused="false"
-                size={24}
-                color="rgba(33, 33, 33, 0.8)"
-              />
+              name="user"
+              focused="false"
+              size={24}
+              color="rgba(33, 33, 33, 0.8)"
+            />
           ),
         }}
       />
