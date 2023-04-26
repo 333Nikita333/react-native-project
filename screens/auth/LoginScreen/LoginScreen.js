@@ -9,8 +9,8 @@ import {
   Keyboard,
   useWindowDimensions,
 } from "react-native";
-import UserBackgroundImage from "../../../components/UeserBackgroundImage/UeserBackgroundImage";
 import { styles } from "./LoginScreen.styled";
+import UserBackgroundImage from "../../../components/UeserBackgroundImage/UeserBackgroundImage";
 
 const initialFormData = {
   email: "",
@@ -75,7 +75,7 @@ const LoginScreen = ({ navigation }) => {
     setFormData(initialFormData);
     Keyboard.dismiss();
     console.log(formData);
-    navigation.navigate("General");
+    navigation.navigate("Home");
   };
 
   return (

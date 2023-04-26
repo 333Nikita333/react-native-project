@@ -26,6 +26,8 @@ export const styles = StyleSheet.create({
   },
   contentImage: {
     position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 8,
     width: "100%",
     height: "100%",
@@ -103,7 +105,7 @@ export const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "auto",
+    marginTop: 150,
     width: 70,
     height: 40,
     borderRadius: 20,

@@ -1,19 +1,13 @@
 import "react-native-gesture-handler";
-import { useCallback } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { useState, useCallback } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import Authorization from "./src/screens/auth/Authorization/Authorization";
-// import Home from "./src/screens/user/Home/HomeTabs";
-// import CommentsScreen from "./src/screens/user/CommentsScreen/CommentsScreen";
-// import { AntDesign } from "@expo/vector-icons";
-import General from "./src/screens/user/General";
+import useRoute from "./router";
 
 export default function App() {
-  const Stack = createNativeStackNavigator();
-
+  const [statusLog, setStatusLog] = useState(false);
+  
   SplashScreen.preventAutoHideAsync();
 
   const [fontsLoaded] = useFonts({
@@ -35,29 +29,10 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer style={styles.container}>
-      <Stack.Navigator initialRouteName="Authorization">
-        <Stack.Screen
-          name="Authorization"
-          component={Authorization}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="General"
-          component={General}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
+    <NavigationContainer onLayout={onLayoutRootView}>
+      {useRoute(statusLog)}
     </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    position: "relative",
 
-    flex: 1,
-    fontFamily: "Roboto-Regular",
-    backgroundColor: "#fff",
-  },
-});

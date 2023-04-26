@@ -16,13 +16,13 @@ const CommentsScreen = () => {
         <View style={styles.contentBox}>
           <Image
             style={styles.contentImage}
-            source={require("../../../../assets/images/image-mountain-343-240.png")}
+            source={require("../../../assets/images/image-mountain-343-240.png")}
           />
 
           <View style={styles.commentBox}>
             <Image
               style={styles.avatarComment}
-              source={require("../../../../assets/images/avatar2-28x28.jpg")}
+              source={require("../../../assets/images/avatar2-28x28.jpg")}
             />
             <View style={styles.commentTextWrapper}>
               <Text style={styles.commentText}>
@@ -36,7 +36,7 @@ const CommentsScreen = () => {
           <View style={styles.commentBox}>
             <Image
               style={styles.avatarComment}
-              source={require("../../../../assets/images/avatar-28x28.jpg")}
+             source={require("../../../assets/images/avatar2-28x28.jpg")}
             />
             <View style={styles.commentTextWrapper}>
               <Text style={styles.commentText}>
@@ -50,7 +50,7 @@ const CommentsScreen = () => {
           <View style={styles.commentBox}>
             <Image
               style={styles.avatarComment}
-              source={require("../../../../assets/images/avatar2-28x28.jpg")}
+              source={require("../../../assets/images/avatar2-28x28.jpg")}
             />
             <View style={styles.commentTextWrapper}>
               <Text style={styles.commentText}>
@@ -63,7 +63,7 @@ const CommentsScreen = () => {
           <View style={styles.commentBox}>
             <Image
               style={styles.avatarComment}
-              source={require("../../../../assets/images/avatar2-28x28.jpg")}
+             source={require("../../../assets/images/avatar2-28x28.jpg")}
             />
             <View style={styles.commentTextWrapper}>
               <Text style={styles.commentText}>
@@ -75,7 +75,7 @@ const CommentsScreen = () => {
           <View style={styles.commentBox}>
             <Image
               style={styles.avatarComment}
-              source={require("../../../../assets/images/avatar2-28x28.jpg")}
+              source={require("../../../assets/images/avatar2-28x28.jpg")}
             />
             <View style={styles.commentTextWrapper}>
               <Text style={styles.commentText}>

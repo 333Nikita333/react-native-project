@@ -100,7 +100,7 @@ const RegistrationScreen = ({ navigation }) => {
     setIsShowKeyboard(false);
     setFormData(initialFormData);
     console.log(formData);
-    navigation.navigate("General");
+    navigation.navigate("Home");
     Keyboard.dismiss();
   };
 

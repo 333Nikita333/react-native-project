@@ -41,7 +41,7 @@ const ProfileScreen = ({ navigation }) => {
     <View style={styles.container}>
       <ImageBackground
         style={styles.bgImage}
-        source={require("../../../../assets/images/image-background-375x812.jpg")}
+        source={require("../../../assets/images/image-mountain-343-240.png")}
       >
         <ScrollView>
           <View style={styles.profileBox}>
@@ -77,7 +77,7 @@ const ProfileScreen = ({ navigation }) => {
             <View style={styles.contentBox}>
               <Image
                 style={styles.contentImage}
-                source={require("../../../../assets/images/image-mountain-343-240.png")}
+                source={require("../../../assets/images/image-mountain-343-240.png")}
               />
               <Text style={styles.contentName}>Лес</Text>
               <View style={styles.contentInfo}>
@@ -106,7 +106,7 @@ const ProfileScreen = ({ navigation }) => {
             <View style={styles.contentBox}>
               <Image
                 style={styles.contentImage}
-                source={require("../../../../assets/images/image-mountain-343-240.png")}
+                source={require("../../../assets/images/image-mountain-343-240.png")}
               />
               <Text style={styles.contentName}>Лес</Text>
               <View style={styles.contentInfo}>
@@ -135,7 +135,7 @@ const ProfileScreen = ({ navigation }) => {
             <View style={styles.contentBox}>
               <Image
                 style={styles.contentImage}
-                source={require("../../../../assets/images/image-mountain-343-240.png")}
+                source={require("../../../assets/images/image-mountain-343-240.png")}
               />
               <Text style={styles.contentName}>Лес</Text>
               <View style={styles.contentInfo}>

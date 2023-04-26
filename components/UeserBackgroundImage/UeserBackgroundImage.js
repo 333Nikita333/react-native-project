@@ -12,7 +12,7 @@ const UserBackgroundImage = ({ children }) => {
       <View>
         <Image
           style={styles.image}
-          source={require("../../../assets/images/image-background-375x812.jpg")}
+          source={require("../../assets/images/image-background-375x812.jpg")}
         />
         {children}
       </View>
