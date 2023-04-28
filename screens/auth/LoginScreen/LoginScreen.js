@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import UserBackgroundImage from "../../../components/UeserBackgroundImage/UeserBackgroundImage";
+import { styles } from "./LoginScreen.styled";
 import {
   View,
   Text,
@@ -9,8 +11,6 @@ import {
   Keyboard,
   useWindowDimensions,
 } from "react-native";
-import { styles } from "./LoginScreen.styled";
-import UserBackgroundImage from "../../../components/UeserBackgroundImage/UeserBackgroundImage";
 
 const initialFormData = {
   email: "",
@@ -18,19 +18,16 @@ const initialFormData = {
 };
 
 const LoginScreen = ({ navigation }) => {
-  //! Стейт отображения клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  //! Стейт отображения пароля
   const [isShowPassword, setIsShowPassword] = useState(false);
-  //! Стейт для хранения имени текущего активного инпута
   const [activeInput, setActiveInput] = useState(null);
-  //! Стейт хранения данных с формы
   const [formData, setFormData] = useState(initialFormData);
-  //! Стейт отображения кнопок signSin и logIn
   const [isShowButtons, setIsShowButtons] = useState(true);
 
-  //? Вешание слушателей события на клавиатуру при монтировании
-  //? и снятие - перед размонтированием
+  const { width, height } = useWindowDimensions();
+  const isPortrait = height > width;
+  const isLandscape = height < width;
+
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -52,29 +49,18 @@ const LoginScreen = ({ navigation }) => {
     };
   }, []);
 
-  //? Хук, который отображает текущую ширину и высоту экрана
-  const { width, height } = useWindowDimensions();
-
-  //? Определение ориентации экрана
-  const isPortrait = height > width;
-  const isLandscape = height < width;
-
-  //? Переключение стейта инпута при фокусе
   const handleInputFocus = (inputName) => {
     setActiveInput(inputName);
   };
 
-  //? Переключение стейта инпута при потере фокуса
   const handleInputBlur = () => {
     setActiveInput(null);
   };
 
-  //? Авторизация и закрытие клавиатуры по клику на кнопку
   const onSubmit = () => {
     setIsShowKeyboard(false);
     setFormData(initialFormData);
     Keyboard.dismiss();
-    console.log(formData);
     navigation.navigate("Home");
   };
 

@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import UserBackgroundImage from "../../../components/UeserBackgroundImage/UeserBackgroundImage";
+import { styles } from "./RegistrationScreen.styled";
 import {
   View,
   Text,
@@ -11,9 +14,6 @@ import {
   Image,
   useWindowDimensions,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import UserBackgroundImage from "../../../components/UeserBackgroundImage/UeserBackgroundImage";
-import { styles } from "./RegistrationScreen.styled";
 
 const initialFormData = {
   login: "",
@@ -21,21 +21,17 @@ const initialFormData = {
   password: "",
 };
 const RegistrationScreen = ({ navigation }) => {
-  //! Стейт отображения клавиатуры
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  //! Стейт отображения пароля
   const [isShowPassword, setIsShowPassword] = useState(false);
-  //! Стейт для хранения имени текущего активного инпута
   const [activeInput, setActiveInput] = useState(null);
-  //! Стейт хранения данных с формы
   const [formData, setFormData] = useState(initialFormData);
-  //! Стейт хранения аватарки пользователя
   const [userAvatar, setUserAvatar] = useState(null);
-  //! Стейт отображения кнопок signSin и logIn
   const [isShowButtons, setIsShowButtons] = useState(true);
 
-  //? Вешание слушателей события на клавиатуру при монтировании
-  //? и снятие - перед размонтированием
+  const { width, height } = useWindowDimensions();
+  const isPortrait = height > width;
+  const isLandscape = height < width;
+
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -57,18 +53,9 @@ const RegistrationScreen = ({ navigation }) => {
     };
   }, []);
 
-  //? Хук, который отображает текущую ширину и высоту экрана
-  const { width, height } = useWindowDimensions();
-
-  //? Определение ориентации экрана
-  const isPortrait = height > width;
-  const isLandscape = height < width;
-
-  //? Зарузка аватарки пользователя
   const pickUserAvatar = async () => {
     if (userAvatar) return setUserAvatar(null);
 
-    // Для запуска библиотеки изображений не требуется никаких разрешений
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -85,21 +72,17 @@ const RegistrationScreen = ({ navigation }) => {
     }
   };
 
-  //? Переключение стейта инпута при фокусе
   const handleInputFocus = (inputName) => {
     setActiveInput(inputName);
   };
 
-  //? Переключение стейта инпута при потере фокуса
   const handleInputBlur = () => {
     setActiveInput(null);
   };
 
-  //? Регистрация и Закрытие клавиатуры по клику на кнопку
   const onSubmit = () => {
     setIsShowKeyboard(false);
     setFormData(initialFormData);
-    console.log(formData);
     navigation.navigate("Home");
     Keyboard.dismiss();
   };

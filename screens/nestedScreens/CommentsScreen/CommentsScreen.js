@@ -1,109 +1,98 @@
-import {
-  Image,
-  ScrollView,
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import { Feather } from "@expo/vector-icons";
+import { useState } from "react";
 import { styles } from "./CommentsScreen.styled";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  TouchableOpacity,
+  Text,
+  TextInput,
+  Image,
+  FlatList,
+  View,
+  Dimensions,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 
-const CommentsScreen = () => {
+const CommentsScreen = ({ route }) => {
+  const photo = route.params[0].photo;
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+
+  const getCurrentTime = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = [
+      "января",
+      "февраля",
+      "марта",
+      "апреля",
+      "мая",
+      "июня",
+      "июля",
+      "августа",
+      "сентября",
+      "октября",
+      "ноября",
+      "декабря",
+    ][date.getMonth()];
+    const day = date.getDate().toString().padStart(2, "0");
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+
+    return `${day} ${month}, ${year} | ${hours}:${minutes}`;
+  };
+
+  const currentTime = getCurrentTime();
+
   return (
-    <View style={styles.container}>
-      <ScrollView>
-        <View style={styles.contentBox}>
-          <Image
-            style={styles.contentImage}
-            source={require("../../../assets/images/image-mountain-343-240.png")}
-          />
-
-          <View style={styles.commentBox}>
-            <Image
-              style={styles.avatarComment}
-              source={require("../../../assets/images/avatar2-28x28.jpg")}
-            />
-            <View style={styles.commentTextWrapper}>
-              <Text style={styles.commentText}>
-                Really love your most recent photo. I’ve been trying to capture
-                the same thing for a few months and would love some tips!
-              </Text>
-              <Text style={styles.commentData}>09 июня, 2020 | 08:40</Text>
-            </View>
-          </View>
-
-          <View style={styles.commentBox}>
-            <Image
-              style={styles.avatarComment}
-             source={require("../../../assets/images/avatar2-28x28.jpg")}
-            />
-            <View style={styles.commentTextWrapper}>
-              <Text style={styles.commentText}>
-                A fast 50mm like f1.8 would help with the bokeh. I’ve been using
-                primes as they tend to get a bit sharper images.
-              </Text>
-              <Text style={styles.commentData}>09 июня, 2020 | 08:40</Text>
-            </View>
-          </View>
-
-          <View style={styles.commentBox}>
-            <Image
-              style={styles.avatarComment}
-              source={require("../../../assets/images/avatar2-28x28.jpg")}
-            />
-            <View style={styles.commentTextWrapper}>
-              <Text style={styles.commentText}>
-                Thank you! That was very helpful!
-              </Text>
-              <Text style={styles.commentData}>09 июня, 2020 | 08:40</Text>
-            </View>
-          </View>
-
-          <View style={styles.commentBox}>
-            <Image
-              style={styles.avatarComment}
-             source={require("../../../assets/images/avatar2-28x28.jpg")}
-            />
-            <View style={styles.commentTextWrapper}>
-              <Text style={styles.commentText}>
-                Thank you! That was very helpful!
-              </Text>
-              <Text style={styles.commentData}>09 июня, 2020 | 08:40</Text>
-            </View>
-          </View>
-          <View style={styles.commentBox}>
-            <Image
-              style={styles.avatarComment}
-              source={require("../../../assets/images/avatar2-28x28.jpg")}
-            />
-            <View style={styles.commentTextWrapper}>
-              <Text style={styles.commentText}>
-                Thank you! That was very helpful!
-              </Text>
-              <Text style={styles.commentData}>09 июня, 2020 | 08:40</Text>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-
-      <View style={styles.inputWrapper}>
-        <TextInput
-          style={styles.inputComment}
-          cursorColor="#FF6C00"
-          placeholder={"Комментировать..."}
-          placeholderTextColor={"#BDBDBD"}
-          // onFocus={() => handleInputFocus("login")}
-          // value={formData.login}
-          // onChangeText={(value) =>
-          //   setFormData((prevState) => ({ ...prevState, login: value }))
-          // }
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <Image style={styles.imgContent} source={{ uri: photo }} />
+        <FlatList
+          data={comments}
+          keyExtractor={(item, indx) => indx.toString()}
+          renderItem={({ item }) => {
+            return (
+              <View
+                style={{
+                  width: Dimensions.get("window").width - 32,
+                  flexDirection: "row",
+                  marginBottom: 24,
+                }}
+              >
+                <Image style={styles.avatarUser} />
+                <View style={styles.commentBox}>
+                  <Text style={styles.commentText}>{item}</Text>
+                  <Text style={styles.commentDate}>{currentTime}</Text>
+                </View>
+              </View>
+            );
+          }}
         />
-        <TouchableOpacity style={styles.btnComment}>
-        <Ionicons name="arrow-up-circle" size={54} color="#FF6C00" />
-        </TouchableOpacity>
+        <View style={styles.inputBox}>
+          <TextInput
+            type="text"
+            value={commentText}
+            onChangeText={setCommentText}
+            style={styles.inputComment}
+            placeholder="Комментировать..."
+            placeholderTextColor="#BDBDBD"
+          />
+          <TouchableOpacity
+            style={styles.btnSend}
+            onPress={() => {
+              if (commentText === "")
+                return alert("Поле не должно быть пустым");
+              setComments((prev) => [...prev, commentText]);
+              setCommentText("");
+              Keyboard.dismiss();
+            }}
+          >
+            <Feather name="arrow-up" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

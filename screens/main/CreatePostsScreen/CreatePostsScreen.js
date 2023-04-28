@@ -12,36 +12,45 @@ import {
 } from "react-native";
 import { FontAwesome, Feather } from "@expo/vector-icons";
 import { Camera } from "expo-camera";
-// import * as Location from "expo-location";
+import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
 import { styles } from "./CreatePostsScreen.styled";
 
-const initialData = {
-  photo: "",
-  name: "",
-  location: "",
-};
-
 const CreatePostsScreen = ({ navigation }) => {
-  //! Стейт с данными поста
-  const [contentData, setContentData] = useState(initialData);
-  //! Стейт отображения кнопки удаления контента при показанной клавиатуре
   const [isShowButton, setIsShowButton] = useState(true);
-  //! Стейт фото
+
   const [photo, setPhoto] = useState(null);
-  //! Стейт камеры
+  const [namePost, setNamePost] = useState("");
+  const [locationPost, setLocationPost] = useState("");
+  const [locationPostCoord, setLocationPostCoord] = useState({});
+  const [locationStatus, setLocationStatus] = useState(null);
+
   const [cameraRef, setCameraRef] = useState(null);
-  //! Стейт активной камеры
   const [isCameraActive, setIsCameraActive] = useState(false);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.back);
 
-  //? Хук, который отображает текущую ширину и высоту экрана
   const { width, height } = useWindowDimensions();
-
-  //? Определение ориентации экрана
   const isPortrait = height > width;
   const isLandscape = height < width;
 
-  //? Вешание слушателей события на клавиатуру при монтировании
-  //? и снятие - перед размонтированием
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      setLocationStatus(status === "granted");
+    })();
+  }, []);
+
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -63,44 +72,53 @@ const CreatePostsScreen = ({ navigation }) => {
     };
   }, []);
 
-  //? Сделать фотографию и получить метку локации
   const takePhoto = async () => {
     if (cameraRef) {
       const options = { quality: 0.5, base64: true };
-      const photo = await cameraRef.takePictureAsync(options);
-      // const location = await Location.getCurrentPositionAsync();
-      // console.log("latitude", location.coords.latitude);
-      // console.log("longitude", location.coords.longitude);
-      setPhoto(photo.uri);
-      setContentData((prevState) => ({ ...prevState, photo: photo.uri }));
+      const { uri } = await cameraRef.takePictureAsync(options);
+      await MediaLibrary.createAssetAsync(uri);
+      setPhoto(uri);
       setIsCameraActive(false);
-      // console.log("photo", photo);
     }
+    const location = await Location.getCurrentPositionAsync({});
+    const coords = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+    setLocationPostCoord(coords);
   };
 
-  //? Отправка фотографии
   const handlePressPublish = () => {
-    // console.log("navigation", navigation);
-    console.log("contentData", contentData);
-    // if (isFormDataNotEmpty()) return;
-    navigation.navigate("DefaultScreenPosts", contentData);
+    navigation.navigate("PostsScreen", {
+      photo,
+      namePost,
+      locationPost,
+      locationPostCoord,
+    });
+    // handleDeleteContent();
   };
 
-  //? Удаление контента
   const handleDeleteContent = () => {
-    if (contentData.photo === "") return;
-
-    setContentData(initialData);
+    setPhoto(null);
+    setNamePost("");
+    setLocationPost("");
   };
 
-  //? Проверка, пустые ли поля формы
   const isFormDataNotEmpty = () => {
-    return (
-      contentData.photo !== "" &&
-      contentData.name !== "" &&
-      contentData.location !== ""
-    );
+    return photo !== null && namePost !== "" && locationPost !== "";
   };
+
+  if (hasPermission === null) {
+    return <View />;
+  }
+
+  if (hasPermission === false) {
+    return (
+      <Text style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        No access to camera
+      </Text>
+    );
+  }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -111,7 +129,8 @@ const CreatePostsScreen = ({ navigation }) => {
               {isCameraActive ? (
                 <Camera
                   style={styles.contentPick}
-                  ref={(ref) => setCameraRef(ref)}
+                  type={type}
+                  ref={setCameraRef}
                 >
                   <TouchableOpacity
                     style={[
@@ -129,11 +148,8 @@ const CreatePostsScreen = ({ navigation }) => {
                   </TouchableOpacity>
                 </Camera>
               ) : (
-                <View
-                  style={styles.contentPick}
-                  ref={(ref) => setCameraRef(ref)}
-                >
-                  {contentData.photo && (
+                <View style={styles.contentPick} ref={setCameraRef}>
+                  {photo && (
                     <Image
                       style={styles.contentImage}
                       source={{ uri: photo }}
@@ -142,9 +158,7 @@ const CreatePostsScreen = ({ navigation }) => {
                   <TouchableOpacity
                     style={[
                       styles.btnContentPic,
-                      contentData.photo &&
-                        !isCameraActive &&
-                        styles.btnContentPicActive,
+                      photo && !isCameraActive && styles.btnContentPicActive,
                     ]}
                     activeOpacity={0.8}
                     onPress={() => setIsCameraActive(true)}
@@ -152,18 +166,14 @@ const CreatePostsScreen = ({ navigation }) => {
                     <FontAwesome
                       name="camera"
                       size={24}
-                      color={
-                        contentData.photo && !isCameraActive
-                          ? "#fff"
-                          : "#BDBDBD"
-                      }
+                      color={photo && !isCameraActive ? "#fff" : "#BDBDBD"}
                     />
                   </TouchableOpacity>
                 </View>
               )}
             </View>
             <Text style={styles.contentText}>
-              {!contentData.photo ? "Загрузите фото" : "Редактировать фото"}
+              {!photo ? "Загрузите фото" : "Редактировать фото"}
             </Text>
           </View>
           <View style={styles.formContent}>
@@ -173,10 +183,8 @@ const CreatePostsScreen = ({ navigation }) => {
                 cursorColor="#FF6C00"
                 placeholder={"Название..."}
                 placeholderTextColor={"#BDBDBD"}
-                value={contentData.name}
-                onChangeText={(value) =>
-                  setContentData((prevState) => ({ ...prevState, name: value }))
-                }
+                value={namePost}
+                onChangeText={setNamePost}
               />
             </View>
             <View style={styles.contentLocationBox}>
@@ -185,13 +193,8 @@ const CreatePostsScreen = ({ navigation }) => {
                 cursorColor="#FF6C00"
                 placeholder={"Местность..."}
                 placeholderTextColor={"#BDBDBD"}
-                value={contentData.location}
-                onChangeText={(value) =>
-                  setContentData((prevState) => ({
-                    ...prevState,
-                    location: value,
-                  }))
-                }
+                value={locationPost}
+                onChangeText={setLocationPost}
               />
               <Feather
                 style={{

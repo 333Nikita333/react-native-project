@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { styles } from "./ProfileScreen.styled";
+import { Feather } from "@expo/vector-icons";
 import {
   View,
   Text,
@@ -8,19 +11,13 @@ import {
   ScrollView,
   ImageBackground,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { styles } from "./ProfileScreen.styled";
-import { Feather } from "@expo/vector-icons";
 
 const ProfileScreen = ({ navigation }) => {
-  //! Стейт хранения аватарки пользователя
   const [userAvatar, setUserAvatar] = useState(null);
 
-  //? Зарузка аватарки пользователя
   const pickUserAvatar = async () => {
     if (userAvatar) return setUserAvatar(null);
 
-    // Для запуска библиотеки изображений не требуется никаких разрешений
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -41,7 +38,7 @@ const ProfileScreen = ({ navigation }) => {
     <View style={styles.container}>
       <ImageBackground
         style={styles.bgImage}
-        source={require("../../../assets/images/image-mountain-343-240.png")}
+        source={require("../../../assets/images/image-background-375x812.jpg")}
       >
         <ScrollView>
           <View style={styles.profileBox}>

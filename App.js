@@ -6,8 +6,8 @@ import * as SplashScreen from "expo-splash-screen";
 import useRoute from "./router";
 
 export default function App() {
-  const [statusLog, setStatusLog] = useState(false);
-  
+  const [statusLog, setStatusLog] = useState(true);
+
   SplashScreen.preventAutoHideAsync();
 
   const [fontsLoaded] = useFonts({
@@ -34,5 +34,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-

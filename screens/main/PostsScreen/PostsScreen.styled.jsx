@@ -36,7 +36,8 @@ export const styles = StyleSheet.create({
     lineHeight: 13,
     color: "#4d4d4d",
   },
-// ////////////////////////////
+  // ////////////////////////////
+  contentList: { paddingBottom: 76 },
   contentBox: {
     width: "100%",
     borderRadius: 8,
@@ -45,6 +46,7 @@ export const styles = StyleSheet.create({
   contentImage: {
     borderRadius: 8,
     width: "100%",
+    height: 240,
     resizeMode: "cover",
   },
   contentName: {
@@ -72,6 +74,10 @@ export const styles = StyleSheet.create({
     color: "#BDBDBD",
   },
   contentLocation: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  btnLocation: {
     flexDirection: "row",
     alignItems: "center",
   },
