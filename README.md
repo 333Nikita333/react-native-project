@@ -6,15 +6,19 @@ This React Native mobile application allows users to take photos and save them t
 
 
 ## Branches:
-**master**<br>
+**master:**<br>
 Creating and running a project with Expo<br>
-**RN-HW-2**<br>
+
+**RN-HW-2:**<br>
 Styling and working with forms and installing React Native Debugger<br>
-**RN-HW-3**<br>
+
+**RN-HW-3:**<br>
 Interaction with event handlers. Added logic for working with the registration and login form<br>
-**RN-HW-4**<br>
+
+**RN-HW-4:**<br>
 Connecting navigation to the application<br>
-**RN-HW-5**<br>
+
+**RN-HW-5:**<br>
 Working with native components:<br>
 - added functionality for working with the camera and saving photos to the phone's memory (expo-camera, expo-media-library);<br>
 - displaying a map with a marker where the photo was taken (react-native-maps);<br>
