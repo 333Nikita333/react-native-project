@@ -3,7 +3,7 @@ This project was bootstrapped with [create-expo-app](https://expo.dev/).
 
 ## Description:
 This React Native mobile application allows users to take photos and save them to their profile with detailed information, including where the photo was taken.
-
+🔧👨‍🎨InProgress...🔧👨‍🎨
 
 ## Branches:
 **master:**<br>
