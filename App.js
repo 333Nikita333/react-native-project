@@ -3,6 +3,9 @@ import { useState, useCallback } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { PersistGate } from "redux-persist/integration/react";
+import { Provider } from "react-redux";
+import store from "./redux/store";
 import useRoute from "./router";
 
 export default function App() {
@@ -29,8 +32,15 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer onLayout={onLayoutRootView}>
-      {useRoute(statusLog)}
-    </NavigationContainer>
+    <Provider store={store.store}>
+      <PersistGate
+        loading={<Text>Loading...</Text>}
+        persistor={store.persistor}
+      >
+        <NavigationContainer onLayout={onLayoutRootView}>
+          {useRoute(statusLog)}
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
   );
 }
