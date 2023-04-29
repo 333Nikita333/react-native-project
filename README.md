@@ -4,11 +4,11 @@
 This React Native mobile application allows users to take photos and save them to their profile with detailed information, including where the photo was taken.
 
 ## Branches:
-master:  
+### master
 **Creating and running a project with Expo**
-RN-HW-2: 
+### RN-HW-2
 **Styling and working with forms and installing React Native Debugger**
-RN-HW-5:
+### RN-HW-5
 **Working with native components:**
 - added functionality for working with the camera and saving photos to the phone's memory (expo-camera, expo-media-library);
 - displaying a map with a marker where the photo was taken (react-native-maps);
@@ -22,3 +22,5 @@ Follow the instructions below to view content on your phone:
 <br/>4. Run "yarn start" or "npm start". After the assembly process is completed, the basic commands with a QR code will appear in the terminal.
 <br/>5. On your phone in "Expo" press "Scan QR Code" to scan the code or "Enter URL manually" to manually enter the URL from the terminal.
 <br/>6. Once the connection is complete, your phone should display the app.
+
+## Used Libraries:
