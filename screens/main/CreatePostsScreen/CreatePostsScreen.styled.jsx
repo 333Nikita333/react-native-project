@@ -105,7 +105,7 @@ export const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 150,
+    marginTop: 80,
     width: 70,
     height: 40,
     borderRadius: 20,
