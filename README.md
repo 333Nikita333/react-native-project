@@ -10,9 +10,7 @@ This React Native mobile application allows users to take photos and save them t
 Creating and running a project with Expo<br>
 
 **RN-HW-2:**<br>
-Styling and working with forms and installing React Native Debugger<br>
-
-**RN-HW-3:**<br>
+Styling and working with forms and installing React Native Debugger.<br>
 Interaction with event handlers. Added logic for working with the registration and login form<br>
 
 **RN-HW-4:**<br>
