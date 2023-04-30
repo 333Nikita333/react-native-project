@@ -1,18 +1,17 @@
 import "react-native-gesture-handler";
-import { useState, useCallback } from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { useCallback } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { PersistGate } from "redux-persist/integration/react";
 import { Provider } from "react-redux";
-import store from "./redux/store";
-import useRoute from "./router";
+import { StatusBar } from "expo-status-bar";
+import Main from "./components/Main";
+import { StyleSheet, View } from "react-native";
+
+import { store } from "./redux/store";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  const [statusLog, setStatusLog] = useState(true);
-
-  SplashScreen.preventAutoHideAsync();
-
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
     "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
@@ -25,22 +24,22 @@ export default function App() {
     }
   }, [fontsLoaded]);
 
-  onLayoutRootView();
-
   if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <Provider store={store.store}>
-      <PersistGate
-        loading={<Text>Loading...</Text>}
-        persistor={store.persistor}
-      >
-        <NavigationContainer onLayout={onLayoutRootView}>
-          {useRoute(statusLog)}
-        </NavigationContainer>
-      </PersistGate>
+    <Provider store={store}>
+      <View onLayout={onLayoutRootView} style={styles.container}>
+        <StatusBar style="auto" />
+        <Main />
+      </View>
     </Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

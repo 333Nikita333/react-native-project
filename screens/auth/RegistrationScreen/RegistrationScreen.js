@@ -14,19 +14,27 @@ import {
   Image,
   useWindowDimensions,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { authSignUpUser } from "../../../redux/auth/authOperations";
 
 const initialFormData = {
-  login: "",
+  userName: "",
   email: "",
   password: "",
+  // userName: "robotina",
+  // email: "robotina@mail.com",
+  // password: "zxc123",
 };
+
 const RegistrationScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [activeInput, setActiveInput] = useState(null);
-  const [formData, setFormData] = useState(initialFormData);
-  const [userAvatar, setUserAvatar] = useState(null);
   const [isShowButtons, setIsShowButtons] = useState(true);
+  const [formData, setFormData] = useState(initialFormData);
+  const [avatarImg, setAvatarImg] = useState(null);
+
+  const dispatch = useDispatch();
 
   const { width, height } = useWindowDimensions();
   const isPortrait = height > width;
@@ -54,7 +62,7 @@ const RegistrationScreen = ({ navigation }) => {
   }, []);
 
   const pickUserAvatar = async () => {
-    if (userAvatar) return setUserAvatar(null);
+    if (avatarImg) return setAvatarImg(null);
 
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -68,7 +76,7 @@ const RegistrationScreen = ({ navigation }) => {
     }
 
     if (!result.canceled) {
-      setUserAvatar(result.assets[0].uri);
+      setAvatarImg(result.assets[0].uri);
     }
   };
 
@@ -82,9 +90,20 @@ const RegistrationScreen = ({ navigation }) => {
 
   const onSubmit = () => {
     setIsShowKeyboard(false);
-    setFormData(initialFormData);
-    navigation.navigate("Home");
     Keyboard.dismiss();
+
+    if (
+      formData.email === "" &&
+      formData.password === "" &&
+      formData.userName === ""
+    ) {
+      console.log("Пустые поля");
+      return;
+    }
+
+    console.log("formData", formData);
+    dispatch(authSignUpUser(formData));
+    setFormData(initialFormData);
   };
 
   return (
@@ -93,15 +112,15 @@ const RegistrationScreen = ({ navigation }) => {
         style={[styles.signInBox, isLandscape && styles.signInBoxLandscape]}
       >
         <View style={styles.avatarBox}>
-          {userAvatar && (
-            <Image style={styles.avatarImage} source={{ uri: userAvatar }} />
+          {avatarImg && (
+            <Image style={styles.avatarImage} source={{ uri: avatarImg }} />
           )}
           <TouchableOpacity
             style={styles.addBtn}
             activeOpacity={0.8}
             onPress={pickUserAvatar}
           >
-            {userAvatar ? (
+            {avatarImg ? (
               <AntDesign name="closecircleo" size={25} color="#E8E8E8" />
             ) : (
               <AntDesign
@@ -122,16 +141,19 @@ const RegistrationScreen = ({ navigation }) => {
               <TextInput
                 style={[
                   styles.input,
-                  activeInput === "login" && styles.inputFocused,
+                  activeInput === "userName" && styles.inputFocused,
                 ]}
                 cursorColor="#FF6C00"
                 placeholder={"Логин"}
                 placeholderTextColor={"#BDBDBD"}
-                onFocus={() => handleInputFocus("login")}
+                onFocus={() => handleInputFocus("userName")}
                 onBlur={handleInputBlur}
-                value={formData.login}
+                value={formData.userName}
                 onChangeText={(value) =>
-                  setFormData((prevState) => ({ ...prevState, login: value }))
+                  setFormData((prevState) => ({
+                    ...prevState,
+                    userName: value,
+                  }))
                 }
               />
             </View>

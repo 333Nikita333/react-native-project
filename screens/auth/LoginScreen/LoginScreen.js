@@ -11,18 +11,24 @@ import {
   Keyboard,
   useWindowDimensions,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { authSignInUser } from "../../../redux/auth/authOperations";
 
 const initialFormData = {
   email: "",
   password: "",
+  // email: "robotina@mail.com",
+  // password: "zxc123",
 };
 
 const LoginScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [activeInput, setActiveInput] = useState(null);
-  const [formData, setFormData] = useState(initialFormData);
   const [isShowButtons, setIsShowButtons] = useState(true);
+  const [formData, setFormData] = useState(initialFormData);
+
+  const dispatch = useDispatch();
 
   const { width, height } = useWindowDimensions();
   const isPortrait = height > width;
@@ -59,9 +65,15 @@ const LoginScreen = ({ navigation }) => {
 
   const onSubmit = () => {
     setIsShowKeyboard(false);
-    setFormData(initialFormData);
     Keyboard.dismiss();
-    navigation.navigate("Home");
+
+    if (formData.email === "" && formData.password === "") {
+      console.log("Пустые поля");
+      return;
+    }
+    console.log("formData", formData);
+    dispatch(authSignInUser(formData));
+    setFormData(initialFormData);
   };
 
   return (
