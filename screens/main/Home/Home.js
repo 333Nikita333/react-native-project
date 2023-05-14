@@ -1,21 +1,21 @@
-import React from "react";
-import { TouchableOpacity } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { Feather } from "@expo/vector-icons";
+import React from 'react';
+import { TouchableOpacity } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Feather } from '@expo/vector-icons';
 
-import PostsScreen from "../PostsScreen/PostsScreen";
-import MapScreen from "../../nestedScreens/MapScreen/MapScreen";
-import CommentsScreen from "../../nestedScreens/CommentsScreen/CommentsScreen";
-import { authSignOutUser } from "../../../redux/auth/authOperations";
-import { useDispatch } from "react-redux";
+import PostsScreen from '../PostsScreen/PostsScreen';
+import MapScreen from '../../nestedScreens/MapScreen/MapScreen';
+import CommentsScreen from '../../nestedScreens/CommentsScreen/CommentsScreen';
+import { useDispatch } from 'react-redux';
+import { authLogout } from '../../../redux/auth/authOperations';
 
 const NestedScreen = createStackNavigator();
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
-  
+
   const signOut = () => {
-    dispatch(authSignOutUser());
+    dispatch(authLogout());
   };
 
   return (
@@ -24,22 +24,20 @@ const Home = ({ navigation }) => {
         name="PostsScreen"
         component={PostsScreen}
         options={{
-          title: "Публикации",
+          title: 'Публикации',
           headerStyle: {
-            borderBottomColor: "#E5E5E5",
+            borderBottomColor: '#E5E5E5',
             borderBottomWidth: 1,
           },
-          headerTitleAlign: "center",
+          headerTitleAlign: 'center',
           headerTitleStyle: {
-            fontFamily: "Roboto-Medium",
+            fontFamily: 'Roboto-Medium',
             fontSize: 17,
             lineHeight: 22,
             letterSpacing: -0.408,
-            // paddingBottom: 16,
           },
           headerRightContainerStyle: {
             paddingRight: 16,
-            // paddingBottom: 16,
           },
           headerRight: () => (
             <TouchableOpacity onPress={signOut}>
@@ -52,18 +50,17 @@ const Home = ({ navigation }) => {
         name="MapScreen"
         component={MapScreen}
         options={{
-          title: "Карта",
+          title: 'Карта',
           headerStyle: {
-            borderBottomColor: "#E5E5E5",
+            borderBottomColor: '#E5E5E5',
             borderBottomWidth: 1,
           },
-          headerTitleAlign: "center",
+          headerTitleAlign: 'center',
           headerTitleStyle: {
-            fontFamily: "Roboto-Medium",
+            fontFamily: 'Roboto-Medium',
             fontSize: 17,
             lineHeight: 22,
             letterSpacing: -0.408,
-            // paddingBottom: 16,
           },
         }}
       />
@@ -71,20 +68,18 @@ const Home = ({ navigation }) => {
         name="CommentsScreen"
         component={CommentsScreen}
         options={{
-          title: "Комментарии",
+          title: 'Комментарии',
           headerStyle: {
             height: 100,
-            borderBottomColor: "#BDBDBD",
+            borderBottomColor: '#BDBDBD',
             borderBottomWidth: 1,
           },
-          headerTitleAlign: "center",
-          // headerTitleContainerStyle: { paddingVertical: 11 },
+          headerTitleAlign: 'center',
           headerTitleStyle: {
-            fontFamily: "Roboto-Medium",
+            fontFamily: 'Roboto-Medium',
             fontSize: 17,
             lineHeight: 22,
             letterSpacing: -0.408,
-            // paddingBottom: 16,
           },
           headerLeft: () => (
             <TouchableOpacity onPress={navigation.goBack}>
@@ -96,9 +91,7 @@ const Home = ({ navigation }) => {
               />
             </TouchableOpacity>
           ),
-          tabBarStyle: { display: "none" },
-          tabBarLabelStyle: { display: "none" },
-          // tabBarHideOnKeyboard: true
+          tabBarStyle: { display: 'none' },
         }}
       />
     </NestedScreen.Navigator>

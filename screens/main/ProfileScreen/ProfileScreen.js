@@ -1,22 +1,51 @@
-import { useState } from "react";
-import { AntDesign } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
-import { styles } from "./ProfileScreen.styled";
-import { Feather } from "@expo/vector-icons";
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AntDesign } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { Feather } from '@expo/vector-icons';
 import {
   View,
   Text,
+  SafeAreaView,
   TouchableOpacity,
   Image,
-  ScrollView,
   ImageBackground,
-} from "react-native";
+  FlatList,
+} from 'react-native';
 
-const ProfileScreen = ({ navigation }) => {
-  const [userAvatar, setUserAvatar] = useState(null);
+import { getUser } from '../../../redux/auth/authSelectors';
+import { getOwnPosts } from '../../../redux/posts/postsSelectors';
+import {
+  authLogout,
+  authUpdateAvatar,
+} from '../../../redux/auth/authOperations';
+import uploadPhotoToServer, {
+  firebaseStore,
+} from '../../../api/uploadPhotoToServer';
+import PostCard from '../../../components/PostCard/PostCard';
+import { styles } from './ProfileScreen.styled';
+
+const Empty = ({ height, ...another }) => (
+  <View style={{ backgroundColor: '#ffffff', height }} {...another} />
+);
+
+const ProfileScreen = () => {
+  const user = useSelector(getUser);
+  const [avatarImg, setAvatarImg] = useState(user.userAvatar);
+  const dispatch = useDispatch();
+
+  const posts = useSelector(getOwnPosts)
+    .slice()
+    .sort((a, b) => {
+      return b.createdAt - a.createdAt;
+    });
 
   const pickUserAvatar = async () => {
-    if (userAvatar) return setUserAvatar(null);
+    if (avatarImg) {
+      dispatch(authUpdateAvatar(''));
+      setAvatarImg('');
+      return;
+    }
 
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -25,12 +54,15 @@ const ProfileScreen = ({ navigation }) => {
       quality: 1,
     });
 
-    if (result.canceled) {
-      return;
-    }
-
     if (!result.canceled) {
-      setUserAvatar(result.assets[0].uri);
+      const photoUrl = await uploadPhotoToServer(
+        result.assets[0].uri,
+        firebaseStore.avatar,
+      );
+      setAvatarImg(photoUrl);
+      if (user.currentUser) {
+        dispatch(authUpdateAvatar(photoUrl));
+      }
     }
   };
 
@@ -38,127 +70,88 @@ const ProfileScreen = ({ navigation }) => {
     <View style={styles.container}>
       <ImageBackground
         style={styles.bgImage}
-        source={require("../../../assets/images/image-background-375x812.jpg")}
+        source={require('../../../assets/images/image-background-375x812.jpg')}
       >
-        <ScrollView>
-          <View style={styles.profileBox}>
-            <View style={styles.avatarBox}>
-              {userAvatar && (
-                <Image
-                  style={styles.avatarImage}
-                  source={{ uri: userAvatar }}
-                />
-              )}
-              <TouchableOpacity
-                style={styles.addBtn}
-                activeOpacity={0.8}
-                onPress={pickUserAvatar}
+        <SafeAreaView style={{ flex: 1 }}>
+          <FlatList
+            data={posts}
+            ListHeaderComponent={
+              <View style={styles.profileBox}>
+                <View style={styles.avatarBox}>
+                  {avatarImg && (
+                    <Image
+                      style={styles.avatarImage}
+                      source={{ uri: avatarImg }}
+                    />
+                  )}
+                  <TouchableOpacity
+                    style={styles.addBtn}
+                    activeOpacity={0.8}
+                    onPress={pickUserAvatar}
+                  >
+                    {avatarImg ? (
+                      <AntDesign
+                        name="closecircleo"
+                        size={25}
+                        color="#E8E8E8"
+                      />
+                    ) : (
+                      <AntDesign name="pluscircleo" size={25} color="#FF6C00" />
+                    )}
+                  </TouchableOpacity>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.btnLogOut}
+                  onPress={() => dispatch(authLogout())}
+                >
+                  <Feather name="log-out" size={24} color="#BDBDBD" />
+                </TouchableOpacity>
+
+                <Text style={styles.title}>{user.nickName}</Text>
+              </View>
+            }
+            ItemSeparatorComponent={() => <Empty height={32} />}
+            renderItem={({ item }) => (
+              <View
+                style={{ paddingHorizontal: 16, backgroundColor: '#ffffff' }}
               >
-                {userAvatar ? (
-                  <AntDesign name="closecircleo" size={25} color="#E8E8E8" />
-                ) : (
-                  <AntDesign name="pluscircleo" size={25} color="#FF6C00" />
-                )}
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-              style={styles.btnLogOut}
-              onPress={() => navigation.navigate("Login")}
-            >
-              <Feather name="log-out" size={24} color="#BDBDBD" />
-            </TouchableOpacity>
-
-            <Text style={styles.title}>Natali Romanova</Text>
-
-            <View style={styles.contentBox}>
-              <Image
-                style={styles.contentImage}
-                source={require("../../../assets/images/image-mountain-343-240.png")}
-              />
-              <Text style={styles.contentName}>Лес</Text>
-              <View style={styles.contentInfo}>
-                <View style={styles.buttonsContent}>
-                  <TouchableOpacity style={styles.btnComment}>
-                    <Feather
-                      style={{ transform: [{ scaleX: -1 }] }}
-                      name="message-circle"
-                      size={24}
-                      color="#FF6C00"
-                    />
-                    <Text style={styles.btnCommentText}>0</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.btnLike}>
-                    <Feather name="thumbs-up" size={24} color="#FF6C00" />
-                    <Text style={styles.btnLikeText}>0</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.contentLocation}>
-                  <Feather name="map-pin" size={24} color="#BDBDBD" />
-                  <Text style={styles.contentLocationText}>Ukraine</Text>
-                </View>
+                <PostCard
+                  id={item.id}
+                  title={item.post.title}
+                  location={item.post.location}
+                  locationData={item.post.locationData}
+                  imgUri={item.post.imgUri}
+                  comments={item.post.comments}
+                  countComments={item.countComments}
+                  countLikes={item.countLikes}
+                />
               </View>
-            </View>
-
-            <View style={styles.contentBox}>
-              <Image
-                style={styles.contentImage}
-                source={require("../../../assets/images/image-mountain-343-240.png")}
-              />
-              <Text style={styles.contentName}>Лес</Text>
-              <View style={styles.contentInfo}>
-                <View style={styles.buttonsContent}>
-                  <TouchableOpacity style={styles.btnComment}>
-                    <Feather
-                      style={{ transform: [{ scaleX: -1 }] }}
-                      name="message-circle"
-                      size={24}
-                      color="#FF6C00"
-                    />
-                    <Text style={styles.btnCommentText}>0</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.btnLike}>
-                    <Feather name="thumbs-up" size={24} color="#FF6C00" />
-                    <Text style={styles.btnLikeText}>0</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.contentLocation}>
-                  <Feather name="map-pin" size={24} color="#BDBDBD" />
-                  <Text style={styles.contentLocationText}>Ukraine</Text>
-                </View>
+            )}
+            ListEmptyComponent={
+              <View
+                style={{
+                  height: 100,
+                  backgroundColor: '#ffffff',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Text>Список постов пуст</Text>
               </View>
-            </View>
+            }
+            ListFooterComponent={<Empty height={43} />}
+          />
 
-            <View style={styles.contentBox}>
-              <Image
-                style={styles.contentImage}
-                source={require("../../../assets/images/image-mountain-343-240.png")}
-              />
-              <Text style={styles.contentName}>Лес</Text>
-              <View style={styles.contentInfo}>
-                <View style={styles.buttonsContent}>
-                  <TouchableOpacity style={styles.btnComment}>
-                    <Feather
-                      style={{ transform: [{ scaleX: -1 }] }}
-                      name="message-circle"
-                      size={24}
-                      color="#FF6C00"
-                    />
-                    <Text style={styles.btnCommentText}>0</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.btnLike}>
-                    <Feather name="thumbs-up" size={24} color="#FF6C00" />
-                    <Text style={styles.btnLikeText}>0</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.contentLocation}>
-                  <Feather name="map-pin" size={24} color="#BDBDBD" />
-                  <Text style={styles.contentLocationText}>Ukraine</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
+          <View
+            style={{
+              marginTop: -1,
+              flexGrow: 10 ** 10,
+              width: '100%',
+              backgroundColor: '#ffffff',
+            }}
+          />
+        </SafeAreaView>
       </ImageBackground>
     </View>
   );

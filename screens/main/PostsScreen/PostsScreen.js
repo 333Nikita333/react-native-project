@@ -1,29 +1,30 @@
-import { useEffect, useState } from "react";
-import { Feather } from "@expo/vector-icons";
-import { styles } from "./PostsScreen.styled";
-import { Image, Text, View, TouchableOpacity, FlatList } from "react-native";
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { styles } from './PostsScreen.styled';
+import { Image, Text, View, FlatList } from 'react-native';
+import { getPosts } from '../../../redux/posts/postsSelectors';
+import { getUser } from '../../../redux/auth/authSelectors';
+import { getAllPosts, getOwnPosts } from '../../../redux/posts/postsOperations';
+import PostCard from '../../../components/PostCard/PostCard';
 
-const PostsScreen = ({ route, navigation }) => {
-  const [posts, setPosts] = useState([]);
-  // console.log("route.params", route.params);
+const PostsScreen = () => {
+  const posts = useSelector(getPosts);
+  const user = useSelector(getUser);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!route.params) return;
-    setPosts((prevState) => [route.params, ...prevState]);
-  }, [route.params]);
-
-  // console.log("posts", posts);
+    dispatch(getAllPosts());
+    dispatch(getOwnPosts());
+  }, [dispatch]);
 
   return (
     <View style={styles.container}>
       <View style={styles.userBox}>
-        <Image
-          style={styles.imageUser}
-          source={require("../../../assets/images/avatar-photo-60x60.jpg")}
-        />
+        <Image style={styles.imageUser} source={{ uri: user.userAvatar }} />
         <View style={styles.textBox}>
-          <Text style={styles.userName}>Natali Romanova</Text>
-          <Text style={styles.userEmail}>email@example.com</Text>
+          <Text style={styles.userName}>{user.nickName}</Text>
+          <Text style={styles.userEmail}>{user.userEmail}</Text>
         </View>
       </View>
 
@@ -34,46 +35,17 @@ const PostsScreen = ({ route, navigation }) => {
           renderItem={({ item, index }) => {
             if (!item) return;
             return (
-              <View style={styles.contentBox}>
-                <Image
-                  style={styles.contentImage}
-                  source={{ uri: item.photo }}
-                />
-                <Text style={styles.contentName}>{item.namePost}</Text>
-                <View style={styles.contentInfo}>
-                  <TouchableOpacity
-                    style={styles.btnComment}
-                    onPress={() =>
-                      navigation.navigate("CommentsScreen", {
-                        ...posts.filter((e, i) => i === index),
-                      })
-                    }
-                  >
-                    <Feather
-                      style={{ transform: [{ scaleX: -1 }] }}
-                      name="message-circle"
-                      size={24}
-                      color="#BDBDBD"
-                    />
-                    <Text style={styles.btnCommentText}>0</Text>
-                  </TouchableOpacity>
-                  <View style={styles.contentLocation}>
-                    <TouchableOpacity
-                      style={styles.btnLocation}
-                      onPress={() =>
-                        navigation.navigate("MapScreen", {
-                          ...posts.filter((e, i) => i === index),
-                        })
-                      }
-                    >
-                      <Feather name="map-pin" size={24} color="#BDBDBD" />
-                      <Text style={styles.contentLocationText}>
-                        {item.locationPost}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
+              <PostCard
+                id={item.id}
+                title={item.post.title}
+                location={item.post.location}
+                locationData={item.post.locationData}
+                imgUri={item.post.imgUri}
+                comments={item.post.comments}
+                countComments={item.countComments}
+                countLikes={item.countLikes}
+                isLiked={item.isLiked}
+              />
             );
           }}
         />

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import UserBackgroundImage from "../../../components/UeserBackgroundImage/UeserBackgroundImage";
-import { styles } from "./LoginScreen.styled";
+import { useEffect, useState } from 'react';
+import UserBackgroundImage from '../../../components/UeserBackgroundImage/UeserBackgroundImage';
+import { styles } from './LoginScreen.styled';
 import {
   View,
   Text,
@@ -10,15 +10,15 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   useWindowDimensions,
-} from "react-native";
-import { useDispatch } from "react-redux";
-import { authSignInUser } from "../../../redux/auth/authOperations";
+} from 'react-native';
+import { useDispatch } from 'react-redux';
+import { authLogin } from '../../../redux/auth/authOperations';
 
 const initialFormData = {
-  email: "",
-  password: "",
-  // email: "robotina@mail.com",
-  // password: "zxc123",
+  // email: '',
+  // password: '',
+  email: 'robotina@mail.com',
+  password: 'zxc123',
 };
 
 const LoginScreen = ({ navigation }) => {
@@ -36,17 +36,17 @@ const LoginScreen = ({ navigation }) => {
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
+      'keyboardDidShow',
       () => {
         setIsShowButtons(false);
-      }
+      },
     );
 
     const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
+      'keyboardDidHide',
       () => {
         setIsShowButtons(true);
-      }
+      },
     );
 
     return () => {
@@ -55,7 +55,7 @@ const LoginScreen = ({ navigation }) => {
     };
   }, []);
 
-  const handleInputFocus = (inputName) => {
+  const handleInputFocus = inputName => {
     setActiveInput(inputName);
   };
 
@@ -67,12 +67,12 @@ const LoginScreen = ({ navigation }) => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
 
-    if (formData.email === "" && formData.password === "") {
-      console.log("Пустые поля");
+    if (formData.email === '' && formData.password === '') {
+      console.log('Пустые поля');
       return;
     }
-    console.log("formData", formData);
-    dispatch(authSignInUser(formData));
+    console.log('formData', formData);
+    dispatch(authLogin(formData));
     setFormData(initialFormData);
   };
 
@@ -81,23 +81,23 @@ const LoginScreen = ({ navigation }) => {
       <View style={[styles.logInBox, isLandscape && styles.logInBoxLandscape]}>
         <Text style={styles.title}>Войти</Text>
         <KeyboardAvoidingView
-          behavior={Platform.OS == "ios" ? "padding" : "height"}
+          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
         >
           <View style={styles.form}>
             <View style={styles.emailBox}>
               <TextInput
                 style={[
                   styles.input,
-                  activeInput === "email" && styles.inputFocused,
+                  activeInput === 'email' && styles.inputFocused,
                 ]}
                 cursorColor="#FF6C00"
-                placeholder={"Адрес электронной почты"}
-                placeholderTextColor={"#BDBDBD"}
-                onFocus={() => handleInputFocus("email")}
+                placeholder={'Адрес электронной почты'}
+                placeholderTextColor={'#BDBDBD'}
+                onFocus={() => handleInputFocus('email')}
                 onBlur={handleInputBlur}
                 value={formData.email}
-                onChangeText={(value) =>
-                  setFormData((prevState) => ({ ...prevState, email: value }))
+                onChangeText={value =>
+                  setFormData(prevState => ({ ...prevState, email: value }))
                 }
               />
             </View>
@@ -105,17 +105,17 @@ const LoginScreen = ({ navigation }) => {
               <TextInput
                 style={[
                   styles.input,
-                  activeInput === "password" && styles.inputFocused,
+                  activeInput === 'password' && styles.inputFocused,
                 ]}
                 cursorColor="#FF6C00"
-                placeholder={"Пароль"}
-                placeholderTextColor={"#BDBDBD"}
+                placeholder={'Пароль'}
+                placeholderTextColor={'#BDBDBD'}
                 secureTextEntry={!isShowPassword}
-                onFocus={() => handleInputFocus("password")}
+                onFocus={() => handleInputFocus('password')}
                 onBlur={handleInputBlur}
                 value={formData.password}
-                onChangeText={(value) =>
-                  setFormData((prevState) => ({
+                onChangeText={value =>
+                  setFormData(prevState => ({
                     ...prevState,
                     password: value,
                   }))
@@ -126,7 +126,7 @@ const LoginScreen = ({ navigation }) => {
                 onPress={() => setIsShowPassword(!isShowPassword)}
               >
                 <Text style={styles.textBtnShowPassword}>
-                  {isShowPassword ? "Скрыть" : "Показать"}
+                  {isShowPassword ? 'Скрыть' : 'Показать'}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -145,7 +145,7 @@ const LoginScreen = ({ navigation }) => {
                     isLandscape && styles.btnSignInIsLandscape,
                   ]}
                   activeOpacity={0.8}
-                  onPress={() => navigation.navigate("Registration")}
+                  onPress={() => navigation.navigate('Registration')}
                 >
                   <Text style={styles.btnSignInText}>
                     Нет аккаунта? Зарегистрироваться

@@ -4,7 +4,7 @@ import {
   Keyboard,
   StyleSheet,
   View,
-} from "react-native";
+} from 'react-native';
 
 const UserBackgroundImage = ({ children }) => {
   return (
@@ -12,7 +12,7 @@ const UserBackgroundImage = ({ children }) => {
       <View>
         <Image
           style={styles.image}
-          source={require("../../assets/images/image-background-375x812.jpg")}
+          source={require('../../assets/images/image-background-375x812.jpg')}
         />
         {children}
       </View>
@@ -22,10 +22,10 @@ const UserBackgroundImage = ({ children }) => {
 
 const styles = StyleSheet.create({
   image: {
-    position: "relative",
+    position: 'relative',
     top: 0,
-    width: "100%",
-    zIndex: -50
+    width: '100%',
+    zIndex: -50,
   },
 });
 

@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { AntDesign } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
-import UserBackgroundImage from "../../../components/UeserBackgroundImage/UeserBackgroundImage";
-import { styles } from "./RegistrationScreen.styled";
+import { useEffect, useState } from 'react';
+import { AntDesign } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import UserBackgroundImage from '../../../components/UeserBackgroundImage/UeserBackgroundImage';
+import { styles } from './RegistrationScreen.styled';
 import {
   View,
   Text,
@@ -13,17 +13,24 @@ import {
   Keyboard,
   Image,
   useWindowDimensions,
-} from "react-native";
-import { useDispatch } from "react-redux";
-import { authSignUpUser } from "../../../redux/auth/authOperations";
+} from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  authRegister,
+  authUpdateAvatar,
+} from '../../../redux/auth/authOperations';
+import uploadPhotoToServer, {
+  firebaseStore,
+} from '../../../api/uploadPhotoToServer';
+import { getUser } from '../../../redux/auth/authSelectors';
 
 const initialFormData = {
-  userName: "",
-  email: "",
-  password: "",
-  // userName: "robotina",
-  // email: "robotina@mail.com",
-  // password: "zxc123",
+  // email: '',
+  // password: '',
+  // nickName: '',
+  email: 'robotina@mail.com',
+  password: 'zxc123',
+  nickName: 'robotina',
 };
 
 const RegistrationScreen = ({ navigation }) => {
@@ -31,9 +38,11 @@ const RegistrationScreen = ({ navigation }) => {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [activeInput, setActiveInput] = useState(null);
   const [isShowButtons, setIsShowButtons] = useState(true);
-  const [formData, setFormData] = useState(initialFormData);
-  const [avatarImg, setAvatarImg] = useState(null);
 
+  const [formData, setFormData] = useState(initialFormData);
+  const [avatarImg, setAvatarImg] = useState('');
+
+  const user = useSelector(getUser);
   const dispatch = useDispatch();
 
   const { width, height } = useWindowDimensions();
@@ -42,17 +51,17 @@ const RegistrationScreen = ({ navigation }) => {
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
+      'keyboardDidShow',
       () => {
         setIsShowButtons(false);
-      }
+      },
     );
 
     const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
+      'keyboardDidHide',
       () => {
         setIsShowButtons(true);
-      }
+      },
     );
 
     return () => {
@@ -62,7 +71,11 @@ const RegistrationScreen = ({ navigation }) => {
   }, []);
 
   const pickUserAvatar = async () => {
-    if (avatarImg) return setAvatarImg(null);
+    if (avatarImg) {
+      dispatch(authUpdateAvatar(''));
+      setAvatarImg('');
+      return;
+    }
 
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -76,11 +89,18 @@ const RegistrationScreen = ({ navigation }) => {
     }
 
     if (!result.canceled) {
-      setAvatarImg(result.assets[0].uri);
+      const photoUrl = await uploadPhotoToServer(
+        result.assets[0].uri,
+        firebaseStore.avatar,
+      );
+      setAvatarImg(photoUrl);
+      if (user.currentUser) {
+        dispatch(authUpdateAvatar(photoUrl));
+      }
     }
   };
 
-  const handleInputFocus = (inputName) => {
+  const handleInputFocus = inputName => {
     setActiveInput(inputName);
   };
 
@@ -92,17 +112,22 @@ const RegistrationScreen = ({ navigation }) => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
 
-    if (
-      formData.email === "" &&
-      formData.password === "" &&
-      formData.userName === ""
-    ) {
-      console.log("Пустые поля");
+    if (avatarImg === '') {
+      alert('Нет изображения');
       return;
     }
 
-    console.log("formData", formData);
-    dispatch(authSignUpUser(formData));
+    if (
+      formData.email === '' &&
+      formData.password === '' &&
+      formData.nickName === ''
+    ) {
+      alert('Пустые поля');
+      return;
+    }
+
+    const data = { ...formData, photoURL: avatarImg };
+    dispatch(authRegister(data));
     setFormData(initialFormData);
   };
 
@@ -134,25 +159,25 @@ const RegistrationScreen = ({ navigation }) => {
         </View>
         <Text style={styles.title}>Регистрация</Text>
         <KeyboardAvoidingView
-          behavior={Platform.OS == "ios" ? "padding" : "height"}
+          behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
         >
           <View style={styles.form}>
             <View style={styles.loginBox}>
               <TextInput
                 style={[
                   styles.input,
-                  activeInput === "userName" && styles.inputFocused,
+                  activeInput === 'nickName' && styles.inputFocused,
                 ]}
                 cursorColor="#FF6C00"
-                placeholder={"Логин"}
-                placeholderTextColor={"#BDBDBD"}
-                onFocus={() => handleInputFocus("userName")}
+                placeholder={'Логин'}
+                placeholderTextColor={'#BDBDBD'}
+                onFocus={() => handleInputFocus('nickName')}
                 onBlur={handleInputBlur}
-                value={formData.userName}
-                onChangeText={(value) =>
-                  setFormData((prevState) => ({
+                value={formData.nickName}
+                onChangeText={value =>
+                  setFormData(prevState => ({
                     ...prevState,
-                    userName: value,
+                    nickName: value,
                   }))
                 }
               />
@@ -161,16 +186,16 @@ const RegistrationScreen = ({ navigation }) => {
               <TextInput
                 style={[
                   styles.input,
-                  activeInput === "email" && styles.inputFocused,
+                  activeInput === 'email' && styles.inputFocused,
                 ]}
                 cursorColor="#FF6C00"
-                placeholder={"Адрес электронной почты"}
-                placeholderTextColor={"#BDBDBD"}
-                onFocus={() => handleInputFocus("email")}
+                placeholder={'Адрес электронной почты'}
+                placeholderTextColor={'#BDBDBD'}
+                onFocus={() => handleInputFocus('email')}
                 onBlur={handleInputBlur}
                 value={formData.email}
-                onChangeText={(value) =>
-                  setFormData((prevState) => ({ ...prevState, email: value }))
+                onChangeText={value =>
+                  setFormData(prevState => ({ ...prevState, email: value }))
                 }
               />
             </View>
@@ -178,17 +203,17 @@ const RegistrationScreen = ({ navigation }) => {
               <TextInput
                 style={[
                   styles.input,
-                  activeInput === "password" && styles.inputFocused,
+                  activeInput === 'password' && styles.inputFocused,
                 ]}
                 cursorColor="#FF6C00"
-                placeholder={"Пароль"}
-                placeholderTextColor={"#BDBDBD"}
+                placeholder={'Пароль'}
+                placeholderTextColor={'#BDBDBD'}
                 secureTextEntry={!isShowPassword}
-                onFocus={() => handleInputFocus("password")}
+                onFocus={() => handleInputFocus('password')}
                 onBlur={handleInputBlur}
                 value={formData.password}
-                onChangeText={(value) =>
-                  setFormData((prevState) => ({
+                onChangeText={value =>
+                  setFormData(prevState => ({
                     ...prevState,
                     password: value,
                   }))
@@ -199,7 +224,7 @@ const RegistrationScreen = ({ navigation }) => {
                 onPress={() => setIsShowPassword(!isShowPassword)}
               >
                 <Text style={styles.textBtnShowPassword}>
-                  {isShowPassword ? "Скрыть" : "Показать"}
+                  {isShowPassword ? 'Скрыть' : 'Показать'}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -215,7 +240,7 @@ const RegistrationScreen = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.btnLogIn}
                   activeOpacity={0.8}
-                  onPress={() => navigation.navigate("Login")}
+                  onPress={() => navigation.navigate('Login')}
                 >
                   <Text style={styles.btnLogInText}>
                     Уже есть аккаунт? Войти

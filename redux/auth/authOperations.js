@@ -1,76 +1,99 @@
-import db from "../../firebase/config";
-
 import {
-  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
   onAuthStateChanged,
   signOut,
-} from "firebase/auth";
-import { authSlice } from "./authSlice";
+} from 'firebase/auth';
+import { authSlice } from './authSlice';
+import { auth } from '../../firebase/config';
 
-const { authSignOut, authStateChange, updateUserProfile } = authSlice.actions;
-
-const auth = getAuth(db);
-
-export const authSignUpUser =
-  ({ email, password, userName }) =>
-  async (dispatch, getState) => {
+export const authRegister =
+  ({ email, password, nickName, photoURL }) =>
+  async dispatch => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-
-      const user = await auth.currentUser;
-
-      const { displayName, uid } = await auth.currentUser;
-
-      await updateProfile(user, {
-        displayName: userName,
+      await updateProfile(auth.currentUser, {
+        displayName: nickName,
+        photoURL,
       });
+      const userSuccess = auth.currentUser;
 
       dispatch(
         authSlice.actions.updateUserProfile({
-          userId: uid,
-          userName: userName,
-        })
+          userId: userSuccess.uid,
+          nickName: userSuccess.displayName,
+          userEmail: userSuccess.email,
+          userAvatar: userSuccess.photoURL,
+        }),
       );
+      dispatch(authSlice.actions.authCurrentUser(true));
     } catch (error) {
-      console.log("error.message", error.message);
+      console.log(error.message);
     }
   };
 
-export const authSignInUser =
+export const authLogin =
   ({ email, password }) =>
-  async (dispatch, getState) => {
+  async dispatch => {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
-      // console.log("user SignInUser", user);
+
+      dispatch(
+        authSlice.actions.updateUserProfile({
+          userId: user.user.uid,
+          nickName: user.user.displayName,
+          userEmail: user?.user?.email,
+          userAvatar: user?.user?.photoURL,
+        }),
+      );
+      dispatch(authSlice.actions.authCurrentUser(true));
     } catch (error) {
-      console.log("error.message", error.message);
+      console.log(error.message);
     }
   };
 
-export const authStateCahngeUser = () => async (dispatch, getState) => {
+export const authUpdateAvatar = photoURL => async dispatch => {
   try {
-    await onAuthStateChanged(auth, (user) => {
-      // console.log(user);
-      if (user) {
-        const userUpdateProfile = {
-          userName: user.displayName,
-          userId: user.uid,
-          userEmail: user.email,
-        };
-
-        dispatch(authStateChange({ stateChange: true }));
-        dispatch(updateUserProfile(userUpdateProfile));
-      }
+    await updateProfile(auth.currentUser, {
+      photoURL,
     });
+
+    const userSuccess = auth.currentUser;
+    dispatch(
+      authSlice.actions.updateUserAvatar({
+        userAvatar: userSuccess.photoURL,
+      }),
+    );
   } catch (error) {
-    throw error;
+    console.log(error.message);
   }
 };
 
-export const authSignOutUser = () => async (dispatch, getState) => {
-  await signOut(auth);
-  dispatch(authSignOut());
+export const authLogout = () => async dispatch => {
+  try {
+    await signOut(auth);
+    dispatch(authSlice.actions.authLogOut());
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const authCurrentUser = () => async dispatch => {
+  try {
+    await onAuthStateChanged(auth, user => {
+      if (user) {
+        dispatch(
+          authSlice.actions.updateUserProfile({
+            userId: user.uid,
+            nickName: user.displayName,
+            userEmail: user?.email,
+          }),
+        );
+        dispatch(authSlice.actions.authCurrentUser(true));
+      }
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
 };

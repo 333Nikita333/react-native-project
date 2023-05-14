@@ -1,40 +1,26 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import React from 'react';
+import { View } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
+
+import { styles } from './MapScreen.styled';
 
 const MapScreen = ({ route }) => {
-  const locationPostCoord = route.params[0].locationPostCoord;
-
-  console.log("locationPostCoordLatitude", locationPostCoord.latitude);
-  console.log("locationPostCoordLongitude", locationPostCoord.longitude);
+  const { location, locationData } = route.params;
 
   return (
     <View style={styles.container}>
       <MapView
         style={{ flex: 1 }}
         initialRegion={{
-          latitude: locationPostCoord.latitude,
-          longitude: locationPostCoord.longitude,
+          ...locationData,
           latitudeDelta: 0.001,
           longitudeDelta: 0.006,
         }}
       >
-        <Marker
-          coordinate={{
-            latitude: locationPostCoord.latitude,
-            longitude: locationPostCoord.longitude,
-          }}
-          title="travel photo"
-        />
+        <Marker coordinate={{ ...locationData }} title={location} />
       </MapView>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default MapScreen;

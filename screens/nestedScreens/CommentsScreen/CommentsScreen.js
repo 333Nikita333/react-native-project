@@ -1,6 +1,7 @@
-import { Feather } from "@expo/vector-icons";
-import { useState } from "react";
-import { styles } from "./CommentsScreen.styled";
+import { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRoute } from '@react-navigation/native';
+import { Feather } from '@expo/vector-icons';
 import {
   TouchableOpacity,
   Text,
@@ -8,88 +9,139 @@ import {
   Image,
   FlatList,
   View,
-  Dimensions,
   TouchableWithoutFeedback,
   Keyboard,
-} from "react-native";
+} from 'react-native';
 
-const CommentsScreen = ({ route }) => {
-  const photo = route.params[0].photo;
-  const [comments, setComments] = useState([]);
-  const [commentText, setCommentText] = useState("");
+import { getComments } from '../../../redux/posts/postsSelectors';
+import { getUser } from '../../../redux/auth/authSelectors';
+import {
+  addCommentByPostID,
+  getAllCommentsByPostId,
+  getAllPosts,
+  getOwnPosts,
+} from '../../../redux/posts/postsOperations';
+import { styles } from './CommentsScreen.styled';
 
-  const getCurrentTime = () => {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = [
-      "января",
-      "февраля",
-      "марта",
-      "апреля",
-      "мая",
-      "июня",
-      "июля",
-      "августа",
-      "сентября",
-      "октября",
-      "ноября",
-      "декабря",
-    ][date.getMonth()];
-    const day = date.getDate().toString().padStart(2, "0");
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
+const CommentsScreen = () => {
+  const [comment, setComment] = useState('');
 
-    return `${day} ${month}, ${year} | ${hours}:${minutes}`;
+  const comments = useSelector(getComments);
+  const dispatch = useDispatch();
+  const route = useRoute();
+  const flatListRef = useRef();
+
+  const { postId, imgUri } = route.params;
+
+  const sortedComments = [...comments].sort(
+    (a, b) => a.dateForSort - b.dateForSort,
+  );
+
+  const { userId } = useSelector(getUser);
+
+  useEffect(() => {
+    dispatch(getAllCommentsByPostId(postId));
+
+    return () => {
+      dispatch(getAllPosts());
+      dispatch(getOwnPosts());
+    };
+  }, [dispatch, postId]);
+
+  const createComment = () => {
+    if (comment === '') return alert('Поле не должно быть пустым');
+
+    dispatch(addCommentByPostID(postId, comment));
+    setComment('');
+    Keyboard.dismiss();
+    flatListRef.current.scrollToEnd({ animated: true });
   };
-
-  const currentTime = getCurrentTime();
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Image style={styles.imgContent} source={{ uri: photo }} />
         <FlatList
-          data={comments}
+          style={{ paddingHorizontal: 16 }}
+          data={sortedComments}
+          ref={flatListRef}
           keyExtractor={(item, indx) => indx.toString()}
+          ListHeaderComponent={
+            <View style={{ paddingVertical: 32 }}>
+              <Image style={styles.image} source={{ uri: imgUri }} />
+            </View>
+          }
           renderItem={({ item }) => {
+            const isOwner = item.authorId === userId;
             return (
               <View
-                style={{
-                  width: Dimensions.get("window").width - 32,
-                  flexDirection: "row",
-                  marginBottom: 24,
-                }}
+                style={[
+                  styles.containerItem,
+                  { flexDirection: isOwner ? 'row-reverse' : 'row' },
+                ]}
               >
-                <Image style={styles.avatarUser} />
-                <View style={styles.commentBox}>
-                  <Text style={styles.commentText}>{item}</Text>
-                  <Text style={styles.commentDate}>{currentTime}</Text>
+                <Image
+                  style={[
+                    styles.authorAvatar,
+                    { [isOwner ? 'marginLeft' : 'marginRight']: 16 },
+                  ]}
+                  source={{ uri: item.userAvatar }}
+                />
+                <View
+                  style={[
+                    styles.commentWrapper,
+                    {
+                      [isOwner
+                        ? 'borderTopRightRadius'
+                        : 'borderTopLeftRadius']: 0,
+                    },
+                  ]}
+                >
+                  <Text style={styles.commentAuthor}>{item.comment}</Text>
+                  <Text
+                    style={[
+                      styles.commentDate,
+                      { textAlign: isOwner ? 'left' : 'right' },
+                    ]}
+                  >
+                    {item.date}
+                  </Text>
                 </View>
               </View>
             );
           }}
+          ItemSeparatorComponent={() => <View style={{ height: 24 }} />}
+          ListEmptyComponent={
+            <View
+              style={{
+                height: 50,
+                backgroundColor: '#ffffff',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text>У вас пока нет комментариев</Text>
+            </View>
+          }
+          ListFooterComponent={() => <View style={{ height: 30 }} />}
         />
-        <View style={styles.inputBox}>
-          <TextInput
-            type="text"
-            value={commentText}
-            onChangeText={setCommentText}
-            style={styles.inputComment}
-            placeholder="Комментировать..."
-            placeholderTextColor="#BDBDBD"
-          />
-          <TouchableOpacity
-            style={styles.btnSend}
-            onPress={() => {
-              if (commentText === "")
-                return alert("Поле не должно быть пустым");
-              setComments((prev) => [...prev, commentText]);
-              setCommentText("");
-              Keyboard.dismiss();
-            }}
-          >
-            <Feather name="arrow-up" size={24} color="white" />
-          </TouchableOpacity>
+        <View style={styles.containerFooter}>
+          <View>
+            <TextInput
+              type="text"
+              value={comment}
+              onChangeText={setComment}
+              style={styles.commentInput}
+              placeholder="Комментировать..."
+              placeholderTextColor="#BDBDBD"
+            />
+            <TouchableOpacity
+              style={styles.iconWrapper}
+              activeOpacity={0.7}
+              onPress={createComment}
+            >
+              <Feather name="arrow-up" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </TouchableWithoutFeedback>

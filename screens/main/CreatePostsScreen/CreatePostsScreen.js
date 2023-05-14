@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import {
   Image,
   Keyboard,
@@ -9,26 +10,34 @@ import {
   TouchableWithoutFeedback,
   View,
   useWindowDimensions,
-} from "react-native";
-import { FontAwesome, Feather } from "@expo/vector-icons";
-import { Camera } from "expo-camera";
-import * as MediaLibrary from "expo-media-library";
-import * as Location from "expo-location";
-import { styles } from "./CreatePostsScreen.styled";
+} from 'react-native';
+import uuid from 'react-native-uuid';
+import { FontAwesome, Feather } from '@expo/vector-icons';
+import { Camera } from 'expo-camera';
+import * as MediaLibrary from 'expo-media-library';
+import * as Location from 'expo-location';
+import { styles } from './CreatePostsScreen.styled';
+import uploadPhotoToServer, {
+  firebaseStore,
+} from '../../../api/uploadPhotoToServer';
+import { uploadPostToServer } from '../../../redux/posts/postsOperations';
 
-const CreatePostsScreen = ({ navigation }) => {
+const initValues = { title: '', place: '' };
+
+const CreatePostsScreen = ({ imgUrl, navigation }) => {
   const [isShowButton, setIsShowButton] = useState(true);
 
-  const [photo, setPhoto] = useState(null);
-  const [namePost, setNamePost] = useState("");
-  const [locationPost, setLocationPost] = useState("");
-  const [locationPostCoord, setLocationPostCoord] = useState({});
+  const [photoUri, setPhotoUri] = useState('');
+  const [values, setValues] = useState(initValues);
+  const [placeLocation, setPlaceLocation] = useState(null);
   const [locationStatus, setLocationStatus] = useState(null);
 
   const [cameraRef, setCameraRef] = useState(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
+
+  const dispatch = useDispatch();
 
   const { width, height } = useWindowDimensions();
   const isPortrait = height > width;
@@ -39,7 +48,11 @@ const CreatePostsScreen = ({ navigation }) => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       await MediaLibrary.requestPermissionsAsync();
 
-      setHasPermission(status === "granted");
+      if (status !== 'granted') {
+        console.log('Permission to access the camera has been denied');
+      }
+
+      setHasPermission(status === 'granted');
     })();
   }, []);
 
@@ -47,23 +60,23 @@ const CreatePostsScreen = ({ navigation }) => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
 
-      setLocationStatus(status === "granted");
+      setLocationStatus(status === 'granted');
     })();
   }, []);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
+      'keyboardDidShow',
       () => {
         setIsShowButton(false);
-      }
+      },
     );
 
     const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
+      'keyboardDidHide',
       () => {
         setIsShowButton(true);
-      }
+      },
     );
 
     return () => {
@@ -77,7 +90,7 @@ const CreatePostsScreen = ({ navigation }) => {
       const options = { quality: 0.5, base64: true };
       const { uri } = await cameraRef.takePictureAsync(options);
       await MediaLibrary.createAssetAsync(uri);
-      setPhoto(uri);
+      setPhotoUri(uri);
       setIsCameraActive(false);
     }
     const location = await Location.getCurrentPositionAsync({});
@@ -85,27 +98,48 @@ const CreatePostsScreen = ({ navigation }) => {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
     };
-    setLocationPostCoord(coords);
+    setPlaceLocation(coords);
   };
 
-  const handlePressPublish = () => {
-    navigation.navigate("PostsScreen", {
-      photo,
-      namePost,
-      locationPost,
-      locationPostCoord,
-    });
-    // handleDeleteContent();
+  const handlePressPublish = async () => {
+    const photoUrl = await uploadPhotoToServer(photoUri, firebaseStore.post);
+    const data = {
+      ...values,
+      photoUri: photoUrl,
+      placeLocation,
+      createdAt: Date.now(),
+    };
+
+    const newPost = {
+      id: uuid.v4(),
+      title: data.title,
+      messageCount: 0,
+      likeCount: 0,
+      imgUri: data.photoUri,
+      location: data.place,
+      locationData: {
+        latitude: data?.placeLocation?.latitude ?? 0,
+        longitude: data?.placeLocation?.longitude ?? 0,
+      },
+      comments: [],
+    };
+    dispatch(uploadPostToServer(newPost));
+
+    navigation.navigate('PostsScreen');
+    handleDeleteContent();
   };
 
   const handleDeleteContent = () => {
-    setPhoto(null);
-    setNamePost("");
-    setLocationPost("");
+    setValues(initValues);
+    setPhotoUri('');
+  };
+
+  const onChangeText = (value, name) => {
+    setValues(v => ({ ...v, [name]: value }));
   };
 
   const isFormDataNotEmpty = () => {
-    return photo !== null && namePost !== "" && locationPost !== "";
+    return photoUri !== '' && values.title !== '' && values.place !== '';
   };
 
   if (hasPermission === null) {
@@ -114,7 +148,7 @@ const CreatePostsScreen = ({ navigation }) => {
 
   if (hasPermission === false) {
     return (
-      <Text style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         No access to camera
       </Text>
     );
@@ -143,22 +177,22 @@ const CreatePostsScreen = ({ navigation }) => {
                     <FontAwesome
                       name="camera"
                       size={24}
-                      color={isCameraActive ? "#fff" : "#BDBDBD"}
+                      color={isCameraActive ? '#fff' : '#BDBDBD'}
                     />
                   </TouchableOpacity>
                 </Camera>
               ) : (
                 <View style={styles.contentPick} ref={setCameraRef}>
-                  {photo && (
+                  {photoUri && (
                     <Image
                       style={styles.contentImage}
-                      source={{ uri: photo }}
+                      source={{ uri: photoUri }}
                     />
                   )}
                   <TouchableOpacity
                     style={[
                       styles.btnContentPic,
-                      photo && !isCameraActive && styles.btnContentPicActive,
+                      photoUri && !isCameraActive && styles.btnContentPicActive,
                     ]}
                     activeOpacity={0.8}
                     onPress={() => setIsCameraActive(true)}
@@ -166,14 +200,14 @@ const CreatePostsScreen = ({ navigation }) => {
                     <FontAwesome
                       name="camera"
                       size={24}
-                      color={photo && !isCameraActive ? "#fff" : "#BDBDBD"}
+                      color={photoUri && !isCameraActive ? '#fff' : '#BDBDBD'}
                     />
                   </TouchableOpacity>
                 </View>
               )}
             </View>
             <Text style={styles.contentText}>
-              {!photo ? "Загрузите фото" : "Редактировать фото"}
+              {!photoUri ? 'Загрузите фото' : 'Редактировать фото'}
             </Text>
           </View>
           <View style={styles.formContent}>
@@ -181,24 +215,24 @@ const CreatePostsScreen = ({ navigation }) => {
               <TextInput
                 style={[styles.input, styles.inputName]}
                 cursorColor="#FF6C00"
-                placeholder={"Название..."}
-                placeholderTextColor={"#BDBDBD"}
-                value={namePost}
-                onChangeText={setNamePost}
+                placeholder={'Название...'}
+                placeholderTextColor={'#BDBDBD'}
+                value={values.title}
+                onChangeText={v => onChangeText(v, 'title')}
               />
             </View>
             <View style={styles.contentLocationBox}>
               <TextInput
                 style={[styles.input, styles.inputLocation]}
                 cursorColor="#FF6C00"
-                placeholder={"Местность..."}
-                placeholderTextColor={"#BDBDBD"}
-                value={locationPost}
-                onChangeText={setLocationPost}
+                placeholder={'Местность...'}
+                placeholderTextColor={'#BDBDBD'}
+                value={values.place}
+                onChangeText={v => onChangeText(v, 'place')}
               />
               <Feather
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   left: 0,
                   top: 20,
                 }}

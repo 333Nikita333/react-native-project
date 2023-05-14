@@ -1,10 +1,10 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { TouchableOpacity } from "react-native";
-import { Feather, Ionicons, AntDesign } from "@expo/vector-icons";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { TouchableOpacity } from 'react-native';
+import { Feather, Ionicons, AntDesign } from '@expo/vector-icons';
 
-import Home from "./Home/Home";
-import CreatePostsScreen from "./CreatePostsScreen/CreatePostsScreen";
-import ProfileScreen from "./ProfileScreen/ProfileScreen";
+import Home from './Home/Home';
+import CreatePostsScreen from './CreatePostsScreen/CreatePostsScreen';
+import ProfileScreen from './ProfileScreen/ProfileScreen';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -22,15 +22,15 @@ const General = ({ navigation }) => {
           marginRight: 15,
           marginLeft: 15,
         },
-        tabBarActiveBackgroundColor: "#FF6C00",
-        tabBarActiveTintColor: "#FFFFFF",
-        tabBarInactiveBackgroundColor: "#FFFFFF",
+        tabBarActiveBackgroundColor: '#FF6C00',
+        tabBarActiveTintColor: '#FFFFFF',
+        tabBarInactiveBackgroundColor: '#FFFFFF',
         tabBarStyle: {
           height: 58,
           paddingHorizontal: 15,
           paddingVertical: 9,
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: 'center',
+          alignItems: 'center',
         },
       }}
     >
@@ -51,16 +51,15 @@ const General = ({ navigation }) => {
         name="CreatePosts"
         component={CreatePostsScreen}
         options={{
-          title: "Создать публикацию",
-          headerTitleAlign: "center",
+          title: 'Создать публикацию',
+          headerTitleAlign: 'center',
           headerTitleStyle: {
-            fontFamily: "Roboto-Medium",
+            fontFamily: 'Roboto-Medium',
             fontSize: 17,
             lineHeight: 22,
             letterSpacing: -0.408,
-            // paddingBottom: 16,
           },
-          tabBarStyle: { display: "none" },
+          tabBarStyle: { display: 'none' },
           tabBarIcon: ({ focused, color, size }) => {
             return (
               <Ionicons name="add" size={30} color={color} focused={focused} />
@@ -79,7 +78,7 @@ const General = ({ navigation }) => {
           ),
 
           headerStyle: {
-            borderBottomColor: "#E5E5E5",
+            borderBottomColor: '#E5E5E5',
             borderBottomWidth: 1,
           },
           headerLeftContainerStyle: {
