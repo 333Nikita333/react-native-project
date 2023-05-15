@@ -1,5 +1,4 @@
 import React from 'react';
-import { View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
 import { styles } from './MapScreen.styled';
@@ -9,12 +8,7 @@ const MapScreen = ({ route }) => {
 
   return (
     <MapView
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-      }}
+      style={styles.container}
       initialRegion={{
         ...locationData,
         latitudeDelta: 0.001,

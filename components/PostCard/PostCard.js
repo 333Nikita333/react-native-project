@@ -3,7 +3,7 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './PostCard.styled';
 import { Feather } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
-import { onPressLikeIcon } from '../../redux/posts/postsOperations';
+import { addLikeToPost } from '../../redux/posts/postsOperations';
 
 const PostCard = ({
   id,
@@ -53,7 +53,7 @@ const PostCard = ({
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.btnLike}
-          onPress={() => dispatch(onPressLikeIcon(id))}
+          onPress={() => dispatch(addLikeToPost(id))}
         >
           <Feather
             name="thumbs-up"
@@ -75,7 +75,6 @@ const PostCard = ({
           <TouchableOpacity
             style={styles.btnLocation}
             onPress={() =>
-                     
               navigation.navigate('MapScreen', { location, locationData })
             }
           >

@@ -18,15 +18,13 @@ export const authRegister =
         photoURL,
       });
       const userSuccess = auth.currentUser;
-
-      dispatch(
-        authSlice.actions.updateUserProfile({
-          userId: userSuccess.uid,
-          nickName: userSuccess.displayName,
-          userEmail: userSuccess.email,
-          userAvatar: userSuccess.photoURL,
-        }),
-      );
+      const data = {
+        userId: userSuccess.uid,
+        nickName: userSuccess.displayName,
+        userEmail: userSuccess.email,
+        userAvatar: userSuccess.photoURL,
+      };
+      dispatch(authSlice.actions.updateUserProfile(data));
       dispatch(authSlice.actions.authCurrentUser(true));
     } catch (error) {
       console.log(error.message);
@@ -38,15 +36,13 @@ export const authLogin =
   async dispatch => {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
-
-      dispatch(
-        authSlice.actions.updateUserProfile({
-          userId: user.user.uid,
-          nickName: user.user.displayName,
-          userEmail: user?.user?.email,
-          userAvatar: user?.user?.photoURL,
-        }),
-      );
+      const data = {
+        userId: user.user.uid,
+        nickName: user.user.displayName,
+        userEmail: user?.user?.email,
+        userAvatar: user?.user?.photoURL,
+      };
+      dispatch(authSlice.actions.updateUserProfile(data));
       dispatch(authSlice.actions.authCurrentUser(true));
     } catch (error) {
       console.log(error.message);

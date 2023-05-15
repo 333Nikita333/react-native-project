@@ -13,8 +13,8 @@ import {
 import { getComments } from '../../../redux/posts/postsSelectors';
 import { getUser } from '../../../redux/auth/authSelectors';
 import {
-  addCommentByPostID,
-  getAllCommentsByPostId,
+  addCommentToPost,
+  getAllComments,
   getAllPosts,
   getOwnPosts,
 } from '../../../redux/posts/postsOperations';
@@ -35,7 +35,7 @@ const CommentsScreen = () => {
   const { postId, imgUri } = route.params;
 
   useEffect(() => {
-    dispatch(getAllCommentsByPostId(postId));
+    dispatch(getAllComments(postId));
 
     return () => {
       dispatch(getAllPosts());
@@ -50,7 +50,7 @@ const CommentsScreen = () => {
   const createComment = () => {
     if (comment === '') return alert('Поле не должно быть пустым');
 
-    dispatch(addCommentByPostID(postId, comment));
+    dispatch(addCommentToPost(postId, comment));
     setComment('');
     Keyboard.dismiss();
     flatListRef.current.scrollToEnd({ animated: true });

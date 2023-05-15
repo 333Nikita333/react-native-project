@@ -15,10 +15,10 @@ import { useDispatch } from 'react-redux';
 import { authLogin } from '../../../redux/auth/authOperations';
 
 const initialFormData = {
-  // email: '',
-  // password: '',
-  email: 'robotina@mail.com',
-  password: 'zxc123',
+  email: '',
+  password: '',
+  // email: 'robotina@mail.com',
+  // password: 'zxc123',
 };
 
 const LoginScreen = ({ navigation }) => {
@@ -68,10 +68,10 @@ const LoginScreen = ({ navigation }) => {
     Keyboard.dismiss();
 
     if (formData.email === '' && formData.password === '') {
-      console.log('Пустые поля');
+      alert('Поля не должны быть пустыми');
       return;
     }
-    console.log('formData', formData);
+
     dispatch(authLogin(formData));
     setFormData(initialFormData);
   };

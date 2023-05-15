@@ -40,7 +40,7 @@ const AvatarBox = ({ avatarImg, setAvatarImg }) => {
       }
     }
   };
-  console.log(avatarImg);
+
   return (
     <>
       {avatarImg && (

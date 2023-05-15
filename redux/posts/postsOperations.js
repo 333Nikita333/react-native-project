@@ -111,7 +111,7 @@ export const uploadPostToServer = post => async (dispatch, getState) => {
   }
 };
 
-export const getAllCommentsByPostId = postId => async dispatch => {
+export const getAllComments = postId => async dispatch => {
   try {
     const docRef = doc(db, 'posts', postId);
     const comments = await getDocs(collection(docRef, 'comments'));
@@ -128,7 +128,7 @@ export const getAllCommentsByPostId = postId => async dispatch => {
   }
 };
 
-export const addCommentByPostID =
+export const addCommentToPost =
   (postId, commentData) => async (dispatch, getState) => {
     try {
       const { nickName, userId, userAvatar } = getState().auth;
@@ -144,13 +144,13 @@ export const addCommentByPostID =
       const docRef = doc(db, 'posts', postId);
 
       await addDoc(collection(docRef, 'comments'), { ...comment });
-      dispatch(getAllCommentsByPostId(postId));
+      dispatch(getAllComments(postId));
     } catch (error) {
       console.log(error.message);
     }
   };
 
-export const onPressLikeIcon = postId => async (dispatch, getState) => {
+export const addLikeToPost = postId => async (dispatch, getState) => {
   try {
     const { userId } = getState().auth;
     const postRef = doc(db, 'posts', postId);
