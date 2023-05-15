@@ -1,11 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRoute } from '@react-navigation/native';
-import { Feather } from '@expo/vector-icons';
 import {
-  TouchableOpacity,
   Text,
-  TextInput,
   Image,
   FlatList,
   View,
@@ -22,22 +19,20 @@ import {
   getOwnPosts,
 } from '../../../redux/posts/postsOperations';
 import { styles } from './CommentsScreen.styled';
+import CommentItem from '../../../components/CommentItem/CommentItem';
+import CommentInput from '../../../components/CommentInput/CommentInput';
 
 const CommentsScreen = () => {
   const [comment, setComment] = useState('');
 
-  const comments = useSelector(getComments);
   const dispatch = useDispatch();
   const route = useRoute();
   const flatListRef = useRef();
 
-  const { postId, imgUri } = route.params;
-
-  const sortedComments = [...comments].sort(
-    (a, b) => a.dateForSort - b.dateForSort,
-  );
-
+  const comments = useSelector(getComments);
   const { userId } = useSelector(getUser);
+
+  const { postId, imgUri } = route.params;
 
   useEffect(() => {
     dispatch(getAllCommentsByPostId(postId));
@@ -47,6 +42,10 @@ const CommentsScreen = () => {
       dispatch(getOwnPosts());
     };
   }, [dispatch, postId]);
+
+  const sortedComments = [...comments].sort(
+    (a, b) => a.dateForSort - b.dateForSort,
+  );
 
   const createComment = () => {
     if (comment === '') return alert('Поле не должно быть пустым');
@@ -73,40 +72,12 @@ const CommentsScreen = () => {
           renderItem={({ item }) => {
             const isOwner = item.authorId === userId;
             return (
-              <View
-                style={[
-                  styles.containerItem,
-                  { flexDirection: isOwner ? 'row-reverse' : 'row' },
-                ]}
-              >
-                <Image
-                  style={[
-                    styles.authorAvatar,
-                    { [isOwner ? 'marginLeft' : 'marginRight']: 16 },
-                  ]}
-                  source={{ uri: item.userAvatar }}
-                />
-                <View
-                  style={[
-                    styles.commentWrapper,
-                    {
-                      [isOwner
-                        ? 'borderTopRightRadius'
-                        : 'borderTopLeftRadius']: 0,
-                    },
-                  ]}
-                >
-                  <Text style={styles.commentAuthor}>{item.comment}</Text>
-                  <Text
-                    style={[
-                      styles.commentDate,
-                      { textAlign: isOwner ? 'left' : 'right' },
-                    ]}
-                  >
-                    {item.date}
-                  </Text>
-                </View>
-              </View>
+              <CommentItem
+                isOwner={isOwner}
+                userAvatar={item.userAvatar}
+                comment={item.comment}
+                date={item.date}
+              />
             );
           }}
           ItemSeparatorComponent={() => <View style={{ height: 24 }} />}
@@ -124,25 +95,11 @@ const CommentsScreen = () => {
           }
           ListFooterComponent={() => <View style={{ height: 30 }} />}
         />
-        <View style={styles.containerFooter}>
-          <View>
-            <TextInput
-              type="text"
-              value={comment}
-              onChangeText={setComment}
-              style={styles.commentInput}
-              placeholder="Комментировать..."
-              placeholderTextColor="#BDBDBD"
-            />
-            <TouchableOpacity
-              style={styles.iconWrapper}
-              activeOpacity={0.7}
-              onPress={createComment}
-            >
-              <Feather name="arrow-up" size={24} color="white" />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <CommentInput
+          comment={comment}
+          setComment={setComment}
+          createComment={createComment}
+        />
       </View>
     </TouchableWithoutFeedback>
   );

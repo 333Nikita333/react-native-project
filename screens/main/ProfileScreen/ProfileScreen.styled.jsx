@@ -29,20 +29,6 @@ export const styles = StyleSheet.create({
 
     backgroundColor: '#F6F6F6',
   },
-  avatarImage: {
-    borderRadius: 16,
-    width: 120,
-    height: 120,
-    resizeMode: 'cover',
-  },
-  addBtn: {
-    position: 'absolute',
-    right: -14,
-    bottom: 14,
-    borderRadius: 45,
-
-    backgroundColor: '#ffffff',
-  },
   btnLogOut: {
     position: 'absolute',
     top: 22,

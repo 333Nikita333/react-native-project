@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { AntDesign } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
 import UserBackgroundImage from '../../../components/UeserBackgroundImage/UeserBackgroundImage';
 import { styles } from './RegistrationScreen.styled';
 import {
@@ -11,18 +9,11 @@ import {
   Platform,
   KeyboardAvoidingView,
   Keyboard,
-  Image,
   useWindowDimensions,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  authRegister,
-  authUpdateAvatar,
-} from '../../../redux/auth/authOperations';
-import uploadPhotoToServer, {
-  firebaseStore,
-} from '../../../api/uploadPhotoToServer';
-import { getUser } from '../../../redux/auth/authSelectors';
+import { useDispatch } from 'react-redux';
+import { authRegister } from '../../../redux/auth/authOperations';
+import AvatarBox from '../../../components/AvatarBox/AvatarBox';
 
 const initialFormData = {
   // email: '',
@@ -42,7 +33,6 @@ const RegistrationScreen = ({ navigation }) => {
   const [formData, setFormData] = useState(initialFormData);
   const [avatarImg, setAvatarImg] = useState('');
 
-  const user = useSelector(getUser);
   const dispatch = useDispatch();
 
   const { width, height } = useWindowDimensions();
@@ -69,36 +59,6 @@ const RegistrationScreen = ({ navigation }) => {
       keyboardDidHideListener.remove();
     };
   }, []);
-
-  const pickUserAvatar = async () => {
-    if (avatarImg) {
-      dispatch(authUpdateAvatar(''));
-      setAvatarImg('');
-      return;
-    }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (result.canceled) {
-      return;
-    }
-
-    if (!result.canceled) {
-      const photoUrl = await uploadPhotoToServer(
-        result.assets[0].uri,
-        firebaseStore.avatar,
-      );
-      setAvatarImg(photoUrl);
-      if (user.currentUser) {
-        dispatch(authUpdateAvatar(photoUrl));
-      }
-    }
-  };
 
   const handleInputFocus = inputName => {
     setActiveInput(inputName);
@@ -137,25 +97,7 @@ const RegistrationScreen = ({ navigation }) => {
         style={[styles.signInBox, isLandscape && styles.signInBoxLandscape]}
       >
         <View style={styles.avatarBox}>
-          {avatarImg && (
-            <Image style={styles.avatarImage} source={{ uri: avatarImg }} />
-          )}
-          <TouchableOpacity
-            style={styles.addBtn}
-            activeOpacity={0.8}
-            onPress={pickUserAvatar}
-          >
-            {avatarImg ? (
-              <AntDesign name="closecircleo" size={25} color="#E8E8E8" />
-            ) : (
-              <AntDesign
-                style={styles.iconAddBtn}
-                name="pluscircleo"
-                size={25}
-                color="#FF6C00"
-              />
-            )}
-          </TouchableOpacity>
+          <AvatarBox avatarImg={avatarImg} setAvatarImg={setAvatarImg} />
         </View>
         <Text style={styles.title}>Регистрация</Text>
         <KeyboardAvoidingView

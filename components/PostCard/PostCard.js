@@ -75,6 +75,7 @@ const PostCard = ({
           <TouchableOpacity
             style={styles.btnLocation}
             onPress={() =>
+                     
               navigation.navigate('MapScreen', { location, locationData })
             }
           >

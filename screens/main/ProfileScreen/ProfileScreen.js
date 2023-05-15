@@ -1,28 +1,20 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AntDesign } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
 import { Feather } from '@expo/vector-icons';
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
-  Image,
   ImageBackground,
   FlatList,
 } from 'react-native';
 
 import { getUser } from '../../../redux/auth/authSelectors';
 import { getOwnPosts } from '../../../redux/posts/postsSelectors';
-import {
-  authLogout,
-  authUpdateAvatar,
-} from '../../../redux/auth/authOperations';
-import uploadPhotoToServer, {
-  firebaseStore,
-} from '../../../api/uploadPhotoToServer';
+import { authLogout } from '../../../redux/auth/authOperations';
 import PostCard from '../../../components/PostCard/PostCard';
+import AvatarBox from '../../../components/AvatarBox/AvatarBox';
 import { styles } from './ProfileScreen.styled';
 
 const Empty = ({ height, ...another }) => (
@@ -40,32 +32,6 @@ const ProfileScreen = () => {
       return b.createdAt - a.createdAt;
     });
 
-  const pickUserAvatar = async () => {
-    if (avatarImg) {
-      dispatch(authUpdateAvatar(''));
-      setAvatarImg('');
-      return;
-    }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      const photoUrl = await uploadPhotoToServer(
-        result.assets[0].uri,
-        firebaseStore.avatar,
-      );
-      setAvatarImg(photoUrl);
-      if (user.currentUser) {
-        dispatch(authUpdateAvatar(photoUrl));
-      }
-    }
-  };
-
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -78,27 +44,10 @@ const ProfileScreen = () => {
             ListHeaderComponent={
               <View style={styles.profileBox}>
                 <View style={styles.avatarBox}>
-                  {avatarImg && (
-                    <Image
-                      style={styles.avatarImage}
-                      source={{ uri: avatarImg }}
-                    />
-                  )}
-                  <TouchableOpacity
-                    style={styles.addBtn}
-                    activeOpacity={0.8}
-                    onPress={pickUserAvatar}
-                  >
-                    {avatarImg ? (
-                      <AntDesign
-                        name="closecircleo"
-                        size={25}
-                        color="#E8E8E8"
-                      />
-                    ) : (
-                      <AntDesign name="pluscircleo" size={25} color="#FF6C00" />
-                    )}
-                  </TouchableOpacity>
+                  <AvatarBox
+                    avatarImg={avatarImg}
+                    setAvatarImg={setAvatarImg}
+                  />
                 </View>
 
                 <TouchableOpacity
