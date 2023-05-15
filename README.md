@@ -24,7 +24,7 @@ Working with native components:<br>
 
 **RN-HW-6:**<br>
 - connecting redux and firebase to the project
-- 
+
 ## Installation:
 Follow the instructions below to view content on your phone: 
 <br/>1. Download "Expo" from GooglePlay/AppStore. 
