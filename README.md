@@ -22,6 +22,9 @@ Working with native components:<br>
 - displaying a map with a marker where the photo was taken (react-native-maps);<br>
 - connection of geolocation to determine the location of the user during the shooting (expo-location).<br>
 
+**RN-HW-6:**<br>
+- connecting redux and firebase to the project
+- 
 ## Installation:
 Follow the instructions below to view content on your phone: 
 <br/>1. Download "Expo" from GooglePlay/AppStore. 
@@ -36,19 +39,23 @@ Follow the instructions below to view content on your phone:
     @vector-icons,
     @react-navigation/bottom-tabs,
     @react-navigation/native,
-    react-native-screens,
-    react-native-safe-area-context
     @react-navigation/stack,
-    react-native-gesture-handler,
-    expo-font,
+    firebase,
     expo,
-    react-native-safe-area-context,
-    react,
-    react-native,
     expo-status-bar,
     expo-camera,
     expo-location,
     expo-image-picker,
     expo-media-library,
     expo-splash-screen,
-    react-native-maps
+    expo-font,
+    react,
+    react-native-screens,
+    react-native-safe-area-context,
+    react-native,
+    react-native-gesture-handler,
+    react-native-maps,
+    react-native-reanimated,
+    react-native-uuid,
+    react-redux,
+    redux-persist
