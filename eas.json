@@ -1,0 +1,21 @@
+{
+  "cli": {
+    "version": ">= 3.13.1"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "API_KEY": "https://staging.company.com/api"
+      }
+    },
+    "production": {}
+  },
+  "submit": {
+    "production": {}
+  }
+}
