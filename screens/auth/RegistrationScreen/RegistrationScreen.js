@@ -16,12 +16,12 @@ import { authRegister } from '../../../redux/auth/authOperations';
 import AvatarBox from '../../../components/AvatarBox/AvatarBox';
 
 const initialFormData = {
-  // email: '',
-  // password: '',
-  // nickName: '',
-  email: 'robotina@mail.com',
-  password: 'zxc123',
-  nickName: 'robotina',
+  email: '',
+  password: '',
+  nickName: '',
+  // email: 'robotina@mail.com',
+  // password: 'zxc123',
+  // nickName: 'robotina',
 };
 
 const RegistrationScreen = ({ navigation }) => {
