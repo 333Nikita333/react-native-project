@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "myReactNativeProject",
-    "slug": "myReactNativeProject",
+    "name": "react-native-project",
+    "slug": "react-native-project",
     "version": "1.0.0",
     "privacy": "public",
     "orientation": "default",
@@ -12,9 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -22,8 +20,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "mykytahilis.myReactNativeProject"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
