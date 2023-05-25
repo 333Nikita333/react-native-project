@@ -22,6 +22,9 @@ Working with native components:<br>
 - displaying a map with a marker where the photo was taken (react-native-maps);<br>
 - connection of geolocation to determine the location of the user during the shooting (expo-location).<br>
 
+**RN-HW-6:**<br>
+- connecting redux and firebase to the project
+
 ## Installation:
 Follow the instructions below to view content on your phone: 
 <br/>1. Download "Expo" from GooglePlay/AppStore. 
