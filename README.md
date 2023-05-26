@@ -4,14 +4,11 @@ This project was bootstrapped with [create-expo-app](https://expo.dev/).
 ## Description:
 This React Native mobile application allows users to take photos and save them to their profile with detailed information, including where the photo was taken.
 
-## Installation:
+## Launch:
 Follow the instructions below to view content on your phone: 
-<br/>1. Download "Expo" from GooglePlay/AppStore. 
+<br/>1. Download "Expo Go" from GooglePlay/AppStore. 
 <br/>2. Register or login to your account in the "Expo".
-<br/>3. Clone the repository from the desired branch.
-<br/>4. Run `yarn start` or `npm start`. After the assembly process is completed, the basic commands with a QR code will appear in the terminal.
-<br/>5. On your phone in "Expo" press "Scan QR Code" to scan the code or "Enter URL manually" to manually enter the URL from the terminal.
-<br/>6. Once the connection is complete, your phone should display the app.
+<br/>3. In "Expo Go" scan the QR code on [this app page](https://expo.dev/%40mykyta_hilis/react-native-project?serviceType=eas&distribution=expo-go&scheme=exp%2Breact-native-project&channel=master&sdkVersion=47.0.0) or by following [this application link](https://expo.dev/%40mykyta_hilis/react-native-project?serviceType=eas&distribution=expo-go&scheme=exp%2Breact-native-project&channel=master&sdkVersion=47.0.0), copy the url and paste it into the field "Enter URL manually" in Expo App.
 
 ## Used Libraries:
     "@expo/vector-icons": "^13.0.0",
