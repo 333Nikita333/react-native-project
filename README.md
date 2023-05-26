@@ -2,7 +2,7 @@
 This project was bootstrapped with [create-expo-app](https://expo.dev/).
 
 ## Description:
-Image Posts App is a mobile application that allows users to create image-based posts. The app features user registration and login functionality, with the ability to remember the last login session for a seamless user experience. The app utilizes Firebase as the backend database for storing data.With the Image Posts app, users can create posts by taking photos and adding descriptions. After creating a post, users are redirected to a page that displays all posts. Each post includes three buttons: Like, Comment, and View on Map. Users can like the post, go to the comments section, and view the map with a marker indicating the location where the photo was taken.
+Image Posts App is a mobile application that allows users to create image-based posts. The app features user registration and login functionality, with the ability to remember the last login session for a seamless user experience. The app utilizes Firebase as the backend database for storing data. With the Image Posts app, users can create posts by taking photos and adding descriptions. After creating a post, users are redirected to a page that displays all posts. Each post includes three buttons: Like, Comment, and View on Map. Users can like the post, go to the comments section, and view the map with a marker indicating the location where the photo was taken.
 
 ## Launch:
 Follow the instructions below to view content on your phone: 
