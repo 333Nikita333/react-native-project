@@ -2,6 +2,7 @@
   "expo": {
     "name": "react-native-project",
     "slug": "react-native-project",
+    "owner": "mykyta_hilis",
     "version": "1.0.0",
     "privacy": "public",
     "orientation": "default",
